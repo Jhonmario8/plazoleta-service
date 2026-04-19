@@ -12,6 +12,7 @@ public class RestaurantUseCase implements IRestaurantServicePort {
 
     private final IRestaurantPersistencePort restaurantPersistencePort;
 
+
     @Override
     public void createRestaurant(Restaurant restaurant) {
         restaurantPersistencePort.saveRestaurant(restaurant);

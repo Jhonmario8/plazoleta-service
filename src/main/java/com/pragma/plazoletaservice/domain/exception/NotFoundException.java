@@ -3,8 +3,8 @@ package com.pragma.plazoletaservice.domain.exception;
 import lombok.Getter;
 
 @Getter
-public class ConflictException extends DomainException{
-    public ConflictException(String message) {
+public class NotFoundException extends RuntimeException{
+    public NotFoundException(String message) {
         super(message);
     }
 }
