@@ -1,9 +1,14 @@
 package com.pragma.plazoletaservice.infrastructure.output.jpa.entites;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "restaurants")
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class RestaurantEntity {
 
     @Id

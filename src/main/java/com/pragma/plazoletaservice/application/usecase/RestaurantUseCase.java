@@ -22,8 +22,8 @@ public class RestaurantUseCase implements IRestaurantServicePort {
             throw new DomainException(DomainConstants.MSG_OWNER_ID_INVALID);
         }
 
-        if (role != Role.OWNER) {
-            throw new UnauthorizedException(DomainConstants.ONLY_OWNER_CAN_CREATE_RESTAURANT_MESSAGE);
+        if (role != Role.ADMIN) {
+            throw new UnauthorizedException(DomainConstants.ONLY_ADMIN_CAN_CREATE_RESTAURANT_MESSAGE);
         }
         restaurant.setOwnerId(ownerId);
         restaurantPersistencePort.saveRestaurant(restaurant);

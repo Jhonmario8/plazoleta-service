@@ -13,7 +13,7 @@ public class SecurityUtils {
         if (claims == null) {
             return null;
         }
-        return (Long) claims.get(DomainConstants.USER_ID_CLAIM);
+        return Long.valueOf(claims.get(DomainConstants.USER_ID_CLAIM).toString());
     }
 
     public static Role getCurrentUserRole() {

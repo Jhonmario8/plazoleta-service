@@ -20,11 +20,11 @@ public class RestaurantController {
 
     private final IRestaurantHandler restaurantHandler;
 
-         @PostMapping
-        public ResponseEntity<Void> createRestaurant(@Valid @RequestBody RestaurantDto restaurantDto) {
-            restaurantHandler.createRestaurant(restaurantDto, SecurityUtils.getCurrentUserRole(), SecurityUtils.getCurrentUserId());
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        }
+    @PostMapping
+    public ResponseEntity<Void> createRestaurant(@Valid @RequestBody RestaurantDto restaurantDto) {
+        restaurantHandler.createRestaurant(restaurantDto, SecurityUtils.getCurrentUserRole(), SecurityUtils.getCurrentUserId());
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
 
 
 }
