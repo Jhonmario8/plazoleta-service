@@ -34,7 +34,6 @@ public class RestaurantDto {
     @NotBlank(message = ApplicationConstants.LOGO_CANNOT_BE_BLANK_MESSAGE)
     private String urlLogo;
 
-    @NotBlank(message = ApplicationConstants.OWNER_ID_CANNOT_BE_NULL_MESSAGE)
-    @Pattern(regexp = "^\\d+$", message = ApplicationConstants.OWNER_ID_ONLY_NUMBERS_MESSAGE)
+
     private Long ownerId;
 }

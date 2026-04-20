@@ -3,6 +3,7 @@ package com.pragma.plazoletaservice.infrastructure.exception;
 import com.pragma.plazoletaservice.domain.exception.ConflictException;
 import com.pragma.plazoletaservice.domain.exception.DomainException;
 import com.pragma.plazoletaservice.domain.exception.NotFoundException;
+import com.pragma.plazoletaservice.domain.exception.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -19,6 +20,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleInfrastructureException(InfrastructureException ex) {
         return ResponseEntity.status(ex.getHttpStatus())
                 .body(new ErrorResponse(ex.getMessage(), ex.getHttpStatus().value()));
+    }
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorizedException(UnauthorizedException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponse(ex.getMessage(), HttpStatus.UNAUTHORIZED.value()));
     }
 
     @ExceptionHandler(NotFoundException.class)

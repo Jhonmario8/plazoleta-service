@@ -13,7 +13,6 @@ public class ApplicationConstants {
     public static final String PHONE_NUMBER_CANNOT_BE_BLANK_MESSAGE = "Phone number cannot be blank";
     public static final String PHONE_NUMBER_INVALID_FORMAT_MESSAGE = "Phone number must be in a valid format, e.g., +1234567890";
     public static final String LOGO_CANNOT_BE_BLANK_MESSAGE = "Logo URL cannot be blank";
-    public static final String OWNER_ID_CANNOT_BE_NULL_MESSAGE = "Owner ID cannot be null";
-    public static final String OWNER_ID_ONLY_NUMBERS_MESSAGE = "Owner ID must contain only numbers";
+
 
 }
