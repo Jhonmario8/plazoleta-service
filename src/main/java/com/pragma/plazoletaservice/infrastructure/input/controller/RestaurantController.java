@@ -3,7 +3,6 @@ package com.pragma.plazoletaservice.infrastructure.input.controller;
 
 import com.pragma.plazoletaservice.application.dto.RestaurantDto;
 import com.pragma.plazoletaservice.application.handler.IRestaurantHandler;
-import com.pragma.plazoletaservice.infrastructure.util.SecurityUtils;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,7 +21,7 @@ public class RestaurantController {
 
     @PostMapping
     public ResponseEntity<Void> createRestaurant(@Valid @RequestBody RestaurantDto restaurantDto) {
-        restaurantHandler.createRestaurant(restaurantDto, SecurityUtils.getCurrentUserRole());
+        restaurantHandler.createRestaurant(restaurantDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
