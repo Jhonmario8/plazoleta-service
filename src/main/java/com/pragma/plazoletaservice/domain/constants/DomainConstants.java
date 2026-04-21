@@ -2,9 +2,11 @@ package com.pragma.plazoletaservice.domain.constants;
 
 public class DomainConstants {
 
+
+
     private DomainConstants() {
     }
-    public static final String ONLY_ADMIN_CAN_CREATE_RESTAURANT_MESSAGE = "Only users with the ADMIN role can create a restaurant";
+    public static final String MSG_OWNER_NOT_FOUND = "Owner not found" ;
     public static final String ONLY_OWNER_CAN_BE_ASSIGNED_MESSAGE = "Only users with the OWNER role can be assigned as restaurant owners";
     public static final String MSG_NAME_REQUIRED = "Name is required";
     public static final String MSG_NAME_ONLY_NUMBERS = "Name cannot be only numbers";
