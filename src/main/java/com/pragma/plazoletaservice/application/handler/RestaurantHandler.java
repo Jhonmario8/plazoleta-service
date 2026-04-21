@@ -15,8 +15,8 @@ public class RestaurantHandler implements IRestaurantHandler{
     private final IRestaurantMapper mapper;
 
     @Override
-    public void createRestaurant(RestaurantDto dto, Role role, Long ownerId ) {
-        restaurantServicePort.createRestaurant(mapper.toDomain(dto), role, ownerId);
+    public void createRestaurant(RestaurantDto dto, Role role) {
+        restaurantServicePort.createRestaurant(mapper.toDomain(dto),  role);
     }
 
 }

@@ -12,14 +12,16 @@ import lombok.*;
 public class RestaurantEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @Column(unique = true)
     private String nit;
     private String address;
+    @Column(unique = true)
     private String phoneNumber;
     private String urlLogo;
+    @Column(unique = true)
     private Long ownerId;
-
 
 }

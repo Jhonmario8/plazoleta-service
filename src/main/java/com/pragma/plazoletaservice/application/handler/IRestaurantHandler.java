@@ -4,5 +4,5 @@ import com.pragma.plazoletaservice.application.dto.RestaurantDto;
 import com.pragma.plazoletaservice.domain.model.Role;
 
 public interface IRestaurantHandler {
-        void createRestaurant(RestaurantDto dto, Role role, Long ownerId);
+        void createRestaurant(RestaurantDto dto, Role role);
 }

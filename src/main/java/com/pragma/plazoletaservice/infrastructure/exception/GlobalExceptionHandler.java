@@ -1,9 +1,11 @@
 package com.pragma.plazoletaservice.infrastructure.exception;
 
+import com.pragma.plazoletaservice.infrastructure.constants.InfrastructureConstants;
 import com.pragma.plazoletaservice.domain.exception.ConflictException;
 import com.pragma.plazoletaservice.domain.exception.DomainException;
 import com.pragma.plazoletaservice.domain.exception.NotFoundException;
 import com.pragma.plazoletaservice.domain.exception.UnauthorizedException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -21,6 +23,23 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(ex.getHttpStatus())
                 .body(new ErrorResponse(ex.getMessage(), ex.getHttpStatus().value()));
     }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        String message = InfrastructureConstants.MSG_DATA_INTEGRITY_ERROR;
+        String causeMessage = ex.getMostSpecificCause().getMessage();
+
+        if (causeMessage.contains("nit")) {
+            message = InfrastructureConstants.MSG_RESTAURANT_NIT_ALREADY_EXISTS;
+        } else if (causeMessage.contains("phone_number")) {
+            message = InfrastructureConstants.MSG_RESTAURANT_PHONE_ALREADY_EXISTS;
+        }
+
+        ErrorResponse error = new ErrorResponse(message, HttpStatus.CONFLICT.value());
+
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ErrorResponse> handleUnauthorizedException(UnauthorizedException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -51,7 +70,7 @@ public class GlobalExceptionHandler {
         ex.getBindingResult().getFieldErrors().forEach(error ->
                 errors.put(error.getField(),
                         error.getDefaultMessage()));
-        return ResponseEntity.badRequest().body(new ErrorResponse("Datos invalidos", 400, errors));
+        return ResponseEntity.badRequest().body(new ErrorResponse(InfrastructureConstants.MSG_INVALID_DATA, 400, errors));
 
     }
 }

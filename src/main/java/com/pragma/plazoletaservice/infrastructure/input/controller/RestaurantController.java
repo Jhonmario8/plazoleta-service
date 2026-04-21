@@ -22,7 +22,7 @@ public class RestaurantController {
 
     @PostMapping
     public ResponseEntity<Void> createRestaurant(@Valid @RequestBody RestaurantDto restaurantDto) {
-        restaurantHandler.createRestaurant(restaurantDto, SecurityUtils.getCurrentUserRole(), SecurityUtils.getCurrentUserId());
+        restaurantHandler.createRestaurant(restaurantDto, SecurityUtils.getCurrentUserRole());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
