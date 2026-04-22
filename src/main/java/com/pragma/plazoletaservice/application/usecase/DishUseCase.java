@@ -3,6 +3,7 @@ package com.pragma.plazoletaservice.application.usecase;
 import com.pragma.plazoletaservice.domain.api.IAuthenticationPort;
 import com.pragma.plazoletaservice.domain.api.IDishServicePort;
 import com.pragma.plazoletaservice.domain.constants.DomainConstants;
+import com.pragma.plazoletaservice.domain.exception.ConflictException;
 import com.pragma.plazoletaservice.domain.exception.NotFoundException;
 import com.pragma.plazoletaservice.domain.exception.UnauthorizedException;
 import com.pragma.plazoletaservice.domain.model.Dish;
@@ -27,6 +28,9 @@ public class DishUseCase implements IDishServicePort {
         Restaurant restaurant = restaurantPersistencePort.getRestaurantById(restaurantId)
                 .orElseThrow(() -> new NotFoundException(DomainConstants.MSG_RESTAURANT_NOT_FOUND));
 
+        if (dishPersistencePort.existsDishByNameAndRestaurantId(dish.getName(), restaurantId)) {
+            throw new ConflictException(DomainConstants.MSG_DISH_ALREADY_EXISTS);
+        }
         Long ownerId = authenticationPort.getCurrentUserId();
 
         if (!restaurant.getOwnerId().equals(ownerId)){

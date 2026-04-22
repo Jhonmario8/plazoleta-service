@@ -3,6 +3,7 @@ package com.pragma.plazoletaservice.application.usecase;
 import com.pragma.plazoletaservice.domain.api.IRestaurantServicePort;
 import com.pragma.plazoletaservice.domain.api.IUserServicePort;
 import com.pragma.plazoletaservice.domain.constants.DomainConstants;
+import com.pragma.plazoletaservice.domain.exception.ConflictException;
 import com.pragma.plazoletaservice.domain.exception.NotFoundException;
 import com.pragma.plazoletaservice.domain.exception.UnauthorizedException;
 import com.pragma.plazoletaservice.domain.model.Restaurant;
@@ -27,6 +28,12 @@ public class RestaurantUseCase implements IRestaurantServicePort {
         }
         if (ownerRole != Role.OWNER) {
             throw new UnauthorizedException(DomainConstants.ONLY_OWNER_CAN_BE_ASSIGNED_MESSAGE);
+        }
+        if (restaurantPersistencePort.existsByNit(restaurant.getNit())){
+            throw new ConflictException(DomainConstants.MSG_NIT_ALREADY_EXISTS);
+        }
+        if (restaurantPersistencePort.existsByPhoneNumber(restaurant.getPhoneNumber())){
+            throw new ConflictException(DomainConstants.MSG_PHONE_NUMBER_ALREADY_EXISTS);
         }
         restaurantPersistencePort.saveRestaurant(restaurant);
     }

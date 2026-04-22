@@ -4,4 +4,6 @@ import com.pragma.plazoletaservice.domain.model.Dish;
 
 public interface IDishPersistencePort {
     void saveDish(Dish dish);
+    boolean existsDishByNameAndRestaurantId(String name, Long restaurantId);
+
 }

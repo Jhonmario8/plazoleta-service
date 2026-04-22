@@ -7,4 +7,6 @@ import java.util.Optional;
 public interface IRestaurantPersistencePort {
     void saveRestaurant(Restaurant restaurant);
     Optional<Restaurant> getRestaurantById(Long id);
+    boolean existsByNit(String nit);
+    boolean existsByPhoneNumber(String phoneNumber);
 }

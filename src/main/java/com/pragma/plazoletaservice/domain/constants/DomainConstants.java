@@ -6,6 +6,9 @@ public class DomainConstants {
     private DomainConstants() {
     }
 
+    public static final String MSG_NIT_ALREADY_EXISTS = "Restaurant with the same NIT already exists";
+    public static final String MSG_PHONE_NUMBER_ALREADY_EXISTS = "Restaurant with the same phone number already exists";
+    public static final String MSG_DISH_ALREADY_EXISTS = "Dish with the same name already exists in this restaurant";
     public static final String MSG_DISH_DESCRIPTION_CANNOT_BE_BLANK = "Description cannot be blank";
     public static final String MSG_DISH_CATEGORY_CANNOT_BE_BLANK = "Category cannot be blank";
     public static final String MSG_NAME_CANNOT_BE_BLANK = "Name cannot be blank";

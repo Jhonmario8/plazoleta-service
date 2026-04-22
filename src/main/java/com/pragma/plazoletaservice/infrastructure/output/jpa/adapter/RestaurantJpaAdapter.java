@@ -3,14 +3,13 @@ package com.pragma.plazoletaservice.infrastructure.output.jpa.adapter;
 
 import com.pragma.plazoletaservice.domain.model.Restaurant;
 import com.pragma.plazoletaservice.domain.spi.IRestaurantPersistencePort;
-import com.pragma.plazoletaservice.infrastructure.constants.InfrastructureConstants;
-import com.pragma.plazoletaservice.infrastructure.exception.InfrastructureException;
 import com.pragma.plazoletaservice.infrastructure.output.jpa.entites.RestaurantEntity;
 import com.pragma.plazoletaservice.infrastructure.output.jpa.mapper.IRestaurantEntityMapper;
 import com.pragma.plazoletaservice.infrastructure.output.jpa.repository.IRestaurantRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -25,9 +24,18 @@ public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
         restaurantRepository.save(entity);
     }
     @Override
-    public Restaurant getRestaurantById(Long id) {
-        RestaurantEntity restaurantEntity = restaurantRepository.findById(id)
-                .orElseThrow(() -> new InfrastructureException(InfrastructureConstants.MSG_USER_NOT_FOUND, HttpStatus.NOT_FOUND));
-       return restaurantMapper.toDomain(restaurantEntity);
+    public Optional<Restaurant> getRestaurantById(Long id) {
+
+       return restaurantRepository.findById(id).map(restaurantMapper::toDomain) ;
+    }
+
+    @Override
+    public boolean existsByNit(String nit) {
+        return restaurantRepository.existsByNit(nit);
+    }
+
+    @Override
+    public boolean existsByPhoneNumber(String phoneNumber) {
+        return restaurantRepository.existsByPhoneNumber(phoneNumber);
     }
 }

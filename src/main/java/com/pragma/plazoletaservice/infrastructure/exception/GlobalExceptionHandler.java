@@ -25,16 +25,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation() {
         String message = InfrastructureConstants.MSG_DATA_INTEGRITY_ERROR;
-        String causeMessage = ex.getMostSpecificCause().getMessage();
-
-        if (causeMessage.contains("nit")) {
-            message = InfrastructureConstants.MSG_RESTAURANT_NIT_ALREADY_EXISTS;
-        } else if (causeMessage.contains("phone_number")) {
-            message = InfrastructureConstants.MSG_RESTAURANT_PHONE_ALREADY_EXISTS;
-        }
-
         ErrorResponse error = new ErrorResponse(message, HttpStatus.CONFLICT.value());
 
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);

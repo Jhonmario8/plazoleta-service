@@ -19,4 +19,9 @@ public class DishJpaAdapter implements IDishPersistencePort {
         dishRepository.save(dishMapper.toEntity(dish));
     }
 
+    @Override
+    public boolean existsDishByNameAndRestaurantId(String name, Long restaurantId) {
+        return dishRepository.existsByNameAndRestaurantEntityId(name, restaurantId);
+    }
+
 }
