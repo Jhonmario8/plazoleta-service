@@ -24,4 +24,7 @@ public class RestaurantEntity {
     @Column(unique = true)
     private Long ownerId;
 
+    @ManyToOne
+    @JoinColumn
+    private  DishEntity dishEntity;
 }

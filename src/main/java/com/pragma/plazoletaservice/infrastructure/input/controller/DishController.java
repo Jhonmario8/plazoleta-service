@@ -1,8 +1,7 @@
 package com.pragma.plazoletaservice.infrastructure.input.controller;
 
-
-import com.pragma.plazoletaservice.application.dto.RestaurantDTO;
-import com.pragma.plazoletaservice.application.handler.IRestaurantHandler;
+import com.pragma.plazoletaservice.application.dto.DishDTO;
+import com.pragma.plazoletaservice.application.handler.IDishHandler;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,17 +12,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/restaurants")
+@RequestMapping("/dishes")
 @AllArgsConstructor
-public class RestaurantController {
+public class DishController {
 
-    private final IRestaurantHandler restaurantHandler;
+    private final IDishHandler dishHandler;
 
     @PostMapping
-    public ResponseEntity<Void> createRestaurant(@Valid @RequestBody RestaurantDTO restaurantDto) {
-        restaurantHandler.createRestaurant(restaurantDto);
+    public ResponseEntity<Void> createDish(@Valid @RequestBody DishDTO dishDto) {
+        dishHandler.createDish(dishDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
-
-
 }

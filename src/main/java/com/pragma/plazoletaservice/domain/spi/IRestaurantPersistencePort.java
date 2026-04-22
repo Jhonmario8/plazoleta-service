@@ -2,7 +2,9 @@ package com.pragma.plazoletaservice.domain.spi;
 
 import com.pragma.plazoletaservice.domain.model.Restaurant;
 
+import java.util.Optional;
+
 public interface IRestaurantPersistencePort {
     void saveRestaurant(Restaurant restaurant);
-    Restaurant getRestaurantById(Long id);
+    Optional<Restaurant> getRestaurantById(Long id);
 }

@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RestaurantDto {
+public class RestaurantDTO {
 
     private Long id;
 
