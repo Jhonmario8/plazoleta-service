@@ -2,10 +2,11 @@ package com.pragma.plazoletaservice.domain.constants;
 
 public class DomainConstants {
 
-
     private DomainConstants() {
     }
 
+    public static final String MSG_DISH_RESTAURANT_MISMATCH = "Dish does not belong to the specified restaurant";
+    public static final String MSG_DISH_NOT_FOUND = "Dish not found";
     public static final String MSG_NIT_ALREADY_EXISTS = "Restaurant with the same NIT already exists";
     public static final String MSG_PHONE_NUMBER_ALREADY_EXISTS = "Restaurant with the same phone number already exists";
     public static final String MSG_DISH_ALREADY_EXISTS = "Dish with the same name already exists in this restaurant";

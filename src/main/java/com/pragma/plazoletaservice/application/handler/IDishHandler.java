@@ -4,4 +4,5 @@ import com.pragma.plazoletaservice.application.dto.DishDTO;
 
 public interface IDishHandler {
     void createDish(DishDTO dishDTO);
+    void updateDish(DishDTO dishDTO);
 }

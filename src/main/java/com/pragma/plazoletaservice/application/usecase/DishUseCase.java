@@ -22,7 +22,7 @@ public class DishUseCase implements IDishServicePort {
     private final IAuthenticationPort authenticationPort;
 
     @Override
-    public void createDish(Dish dish,Long restaurantId) {
+    public void createDish(Dish dish, Long restaurantId) {
 
 
         Restaurant restaurant = restaurantPersistencePort.getRestaurantById(restaurantId)
@@ -33,10 +33,37 @@ public class DishUseCase implements IDishServicePort {
         }
         Long ownerId = authenticationPort.getCurrentUserId();
 
-        if (!restaurant.getOwnerId().equals(ownerId)){
+        if (!restaurant.getOwnerId().equals(ownerId)) {
             throw new UnauthorizedException(DomainConstants.MSG_NOT_RESTAURANT_OWNER);
         }
         dish.setRestaurant(restaurant);
         dishPersistencePort.saveDish(dish);
+    }
+
+    @Override
+    public void updateDish(Dish dish, Long restaurantId) {
+
+        Restaurant restaurant = restaurantPersistencePort.getRestaurantById(restaurantId)
+                .orElseThrow(() -> new NotFoundException(DomainConstants.MSG_RESTAURANT_NOT_FOUND));
+
+        Dish existingDish = dishPersistencePort.getDishById(dish.getId())
+                .orElseThrow(() -> new NotFoundException(DomainConstants.MSG_DISH_NOT_FOUND));
+
+        Long ownerId = authenticationPort.getCurrentUserId();
+
+        if (!restaurant.getOwnerId().equals(ownerId)) {
+            throw new UnauthorizedException(DomainConstants.MSG_NOT_RESTAURANT_OWNER);
+        }
+        if (!existingDish.getRestaurant().getId().equals(restaurantId)) {
+            throw new ConflictException(DomainConstants.MSG_DISH_RESTAURANT_MISMATCH);
+        }
+
+        existingDish.setName(dish.getName());
+        existingDish.setDescription(dish.getDescription());
+        existingDish.setPrice(dish.getPrice());
+        existingDish.setCategory(dish.getCategory());
+        existingDish.setActive(dish.getActive());
+
+        dishPersistencePort.saveDish(existingDish);
     }
 }

@@ -18,4 +18,8 @@ public class DishHandler implements IDishHandler {
         dishServicePort.createDish(mapper.toDomain(dto),dto.getRestaurantId());
     }
 
+    @Override
+    public void updateDish(DishDTO dto) {
+        dishServicePort.updateDish(mapper.toDomain(dto),dto.getRestaurantId());
+    }
 }
