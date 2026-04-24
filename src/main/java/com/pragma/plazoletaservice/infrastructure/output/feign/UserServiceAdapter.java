@@ -1,6 +1,8 @@
 package com.pragma.plazoletaservice.infrastructure.output.feign;
 
+
 import com.pragma.plazoletaservice.domain.api.IUserServicePort;
+import com.pragma.plazoletaservice.domain.model.Employee;
 import com.pragma.plazoletaservice.domain.model.Role;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -14,5 +16,10 @@ public class UserServiceAdapter implements IUserServicePort {
     @Override
     public Role getUserRole(Long id) {
         return userClient.getUserRole(id);
+    }
+
+    @Override
+    public void createEmployee(Employee employee) {
+        userClient.createEmployee(employee);
     }
 }

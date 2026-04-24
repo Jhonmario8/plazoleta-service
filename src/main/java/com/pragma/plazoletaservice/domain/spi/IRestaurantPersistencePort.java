@@ -9,4 +9,5 @@ public interface IRestaurantPersistencePort {
     Optional<Restaurant> getRestaurantById(Long id);
     boolean existsByNit(String nit);
     boolean existsByPhoneNumber(String phoneNumber);
+    Optional<Restaurant> getRestaurantByOwnerId(Long ownerId);
 }

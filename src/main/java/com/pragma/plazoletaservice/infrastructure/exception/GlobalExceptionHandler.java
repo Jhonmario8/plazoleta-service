@@ -1,10 +1,13 @@
 package com.pragma.plazoletaservice.infrastructure.exception;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pragma.plazoletaservice.infrastructure.constants.InfrastructureConstants;
 import com.pragma.plazoletaservice.domain.exception.ConflictException;
 import com.pragma.plazoletaservice.domain.exception.DomainException;
 import com.pragma.plazoletaservice.domain.exception.NotFoundException;
 import com.pragma.plazoletaservice.domain.exception.UnauthorizedException;
+import feign.FeignException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +25,26 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleInfrastructureException(InfrastructureException ex) {
         return ResponseEntity.status(ex.getHttpStatus())
                 .body(new ErrorResponse(ex.getMessage(), ex.getHttpStatus().value()));
+    }
+
+    @ExceptionHandler(FeignException.Conflict.class)
+    public ResponseEntity<ErrorResponse> handleFeignConflict(FeignException.Conflict ex) {
+
+        String responseBody = ex.contentUTF8(); // aquí viene el JSON del otro servicio
+
+        String message = "Conflict in external service";
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode node = mapper.readTree(responseBody);
+            message = node.get("message").asText();
+        } catch (Exception e) {
+            // Si no se puede parsear el mensaje, se deja el mensaje genérico
+        }
+
+        ErrorResponse error = new ErrorResponse(message, HttpStatus.CONFLICT.value());
+
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)

@@ -5,6 +5,7 @@ public class DomainConstants {
     private DomainConstants() {
     }
 
+    public static final String ONLY_OWNER_CAN_CREATE_EMPLOYEES = "Only restaurant owners can create employees";
     public static final String MSG_DISH_RESTAURANT_MISMATCH = "Dish does not belong to the specified restaurant";
     public static final String MSG_DISH_NOT_FOUND = "Dish not found";
     public static final String MSG_NIT_ALREADY_EXISTS = "Restaurant with the same NIT already exists";

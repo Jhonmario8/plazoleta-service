@@ -1,9 +1,10 @@
 package com.pragma.plazoletaservice.infrastructure.constants;
 
 public class InfrastructureConstants {
+
+
     private InfrastructureConstants() {
     }
-
     public static final String MSG_TOKEN_EXPIRED = "Token expired";
     public static final String MSG_TOKEN_INVALID = "Invalid token";
 

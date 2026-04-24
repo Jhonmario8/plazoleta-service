@@ -38,4 +38,8 @@ public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
     public boolean existsByPhoneNumber(String phoneNumber) {
         return restaurantRepository.existsByPhoneNumber(phoneNumber);
     }
+    @Override
+    public Optional<Restaurant> getRestaurantByOwnerId(Long ownerId) {
+        return restaurantRepository.findByOwnerId(ownerId).map(restaurantMapper::toDomain);
+    }
 }
