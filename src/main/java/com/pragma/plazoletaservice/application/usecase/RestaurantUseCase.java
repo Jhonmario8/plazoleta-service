@@ -12,6 +12,9 @@ import com.pragma.plazoletaservice.domain.model.Restaurant;
 import com.pragma.plazoletaservice.domain.model.Role;
 import com.pragma.plazoletaservice.domain.spi.IRestaurantPersistencePort;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -51,11 +54,16 @@ public class RestaurantUseCase implements IRestaurantServicePort {
         if (ownerRole != Role.OWNER) {
             throw new UnauthorizedException(DomainConstants.ONLY_OWNER_CAN_CREATE_EMPLOYEES);
         }
-        Restaurant restaurant = restaurantPersistencePort.getRestaurantByOwnerId(currentUserId)
-                .orElseThrow(() -> new NotFoundException(DomainConstants.MSG_RESTAURANT_NOT_FOUND));
+        Restaurant restaurant = restaurantPersistencePort.getRestaurantByOwnerId(currentUserId).orElseThrow(() -> new NotFoundException(DomainConstants.MSG_RESTAURANT_NOT_FOUND));
 
         employee.setRestaurantId(restaurant.getId());
 
         userServicePort.createEmployee(employee);
+    }
+
+    @Override
+    public Page<Restaurant> getRestaurants(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return restaurantPersistencePort.getRestaurants(pageable);
     }
 }

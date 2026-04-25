@@ -25,6 +25,7 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/restaurants").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/restaurants").authenticated()
                         .requestMatchers(HttpMethod.POST,  "/dishes").hasRole("OWNER")
                         .requestMatchers(HttpMethod.PUT, "/dishes").hasRole("OWNER")
                         .anyRequest().permitAll()

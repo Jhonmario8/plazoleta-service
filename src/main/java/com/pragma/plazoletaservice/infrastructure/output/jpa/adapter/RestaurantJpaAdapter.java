@@ -7,6 +7,8 @@ import com.pragma.plazoletaservice.infrastructure.output.jpa.entites.RestaurantE
 import com.pragma.plazoletaservice.infrastructure.output.jpa.mapper.IRestaurantEntityMapper;
 import com.pragma.plazoletaservice.infrastructure.output.jpa.repository.IRestaurantRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -41,5 +43,11 @@ public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
     @Override
     public Optional<Restaurant> getRestaurantByOwnerId(Long ownerId) {
         return restaurantRepository.findByOwnerId(ownerId).map(restaurantMapper::toDomain);
+    }
+
+    @Override
+    public Page<Restaurant> getRestaurants(Pageable pageable) {
+        return restaurantRepository.findAllByOrderByNameAsc(pageable)
+                .map(restaurantMapper::toDomain);
     }
 }

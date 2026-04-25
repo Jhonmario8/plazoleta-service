@@ -1,6 +1,8 @@
 package com.pragma.plazoletaservice.infrastructure.output.jpa.repository;
 
 import com.pragma.plazoletaservice.infrastructure.output.jpa.entites.RestaurantEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +15,5 @@ public interface IRestaurantRepository extends JpaRepository<RestaurantEntity, L
     boolean existsByNit(String nit);
     boolean existsByPhoneNumber(String phoneNumber);
     Optional<RestaurantEntity>  findByOwnerId(Long ownerId);
+    Page<RestaurantEntity> findAllByOrderByNameAsc(Pageable pageable);
 }
