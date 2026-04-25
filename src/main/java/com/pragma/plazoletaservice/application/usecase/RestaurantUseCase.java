@@ -1,5 +1,8 @@
 package com.pragma.plazoletaservice.application.usecase;
 
+import com.pragma.plazoletaservice.application.dto.PaginatedResponse;
+import com.pragma.plazoletaservice.application.dto.RestaurantResponseDto;
+import com.pragma.plazoletaservice.application.mapper.IRestaurantMapper;
 import com.pragma.plazoletaservice.domain.api.IAuthenticationPort;
 import com.pragma.plazoletaservice.domain.api.IRestaurantServicePort;
 import com.pragma.plazoletaservice.domain.api.IUserServicePort;
@@ -14,8 +17,9 @@ import com.pragma.plazoletaservice.domain.spi.IRestaurantPersistencePort;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -24,7 +28,7 @@ public class RestaurantUseCase implements IRestaurantServicePort {
     private final IRestaurantPersistencePort restaurantPersistencePort;
     private final IAuthenticationPort authenticationPort;
     private final IUserServicePort userServicePort;
-
+    private final IRestaurantMapper restaurantMapper;
     @Override
     public void createRestaurant(Restaurant restaurant) {
 
@@ -62,8 +66,20 @@ public class RestaurantUseCase implements IRestaurantServicePort {
     }
 
     @Override
-    public Page<Restaurant> getRestaurants(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return restaurantPersistencePort.getRestaurants(pageable);
+    public PaginatedResponse<RestaurantResponseDto> getRestaurants(int page, int size) {
+
+        Page<Restaurant> restaurantPage = restaurantPersistencePort.getRestaurants(PageRequest.of(page, size));
+
+        List<RestaurantResponseDto> content = restaurantPage.getContent()
+                .stream()
+                .map(restaurantMapper::toResponse)
+                .toList();
+        return new PaginatedResponse<>(
+                content,
+                restaurantPage.getNumber(),
+                restaurantPage.getSize(),
+                restaurantPage.getTotalElements(),
+                restaurantPage.getTotalPages()
+        );
     }
 }

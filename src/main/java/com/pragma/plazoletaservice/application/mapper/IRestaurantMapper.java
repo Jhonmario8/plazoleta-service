@@ -8,11 +8,13 @@ import org.mapstruct.MappingConstants;
 
 
 
+
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface IRestaurantMapper {
 
     Restaurant toDomain(RestaurantDTO restaurantDTO);
 
     RestaurantResponseDto toResponse(Restaurant restaurant);
+
 
 }

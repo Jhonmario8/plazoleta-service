@@ -2,12 +2,12 @@ package com.pragma.plazoletaservice.infrastructure.input.controller;
 
 
 import com.pragma.plazoletaservice.application.dto.EmployeeRequestDTO;
+import com.pragma.plazoletaservice.application.dto.PaginatedResponse;
 import com.pragma.plazoletaservice.application.dto.RestaurantDTO;
 import com.pragma.plazoletaservice.application.dto.RestaurantResponseDto;
 import com.pragma.plazoletaservice.application.handler.IRestaurantHandler;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +33,7 @@ public class RestaurantController {
     }
 
     @GetMapping("/restaurants")
-    public ResponseEntity<Page<RestaurantResponseDto>> getRestaurants(
+    public ResponseEntity<PaginatedResponse<RestaurantResponseDto>> getRestaurants(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(restaurantHandler.getRestaurants(page, size));
