@@ -2,9 +2,12 @@ package com.pragma.plazoletaservice.domain.constants;
 
 public class DomainConstants {
 
+
+
     private DomainConstants() {
     }
-
+    public static final String MSG_CATEGORY_N0T_FOUND = "Category not found";
+    public static final String MSG_CATEGORY_ID_CANNOT_BE_NULL = "Category ID cannot be null";
     public static final String ONLY_OWNER_CAN_CREATE_EMPLOYEES = "Only restaurant owners can create employees";
     public static final String MSG_DISH_RESTAURANT_MISMATCH = "Dish does not belong to the specified restaurant";
     public static final String MSG_DISH_NOT_FOUND = "Dish not found";

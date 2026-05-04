@@ -14,6 +14,7 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
+    database-platform: org.hibernate.dialect.MySQLDialect
   security:
     jwt:
       secret: ${PRAGMA_JWT_KEY}

@@ -20,13 +20,15 @@ import lombok.Setter;
 public class DishEntity {
 
      @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private Integer price;
     private String description;
     private String urlImage;
-    private String category;
+
+    @ManyToOne
+    private CategoryEntity category;
     private Boolean active;
 
     @ManyToOne

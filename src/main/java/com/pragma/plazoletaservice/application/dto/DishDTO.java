@@ -24,7 +24,8 @@ public class DishDTO {
     private String description;
     @NotBlank(message = ApplicationConstants.LOGO_CANNOT_BE_BLANK_MESSAGE)
     private String urlImage;
-    @NotBlank(message = ApplicationConstants.DISH_CATEGORY_CANNOT_BE_BLANK_MESSAGE)
-    private String category;
+
+    private Long categoryId;
+
     private Long restaurantId;
 }

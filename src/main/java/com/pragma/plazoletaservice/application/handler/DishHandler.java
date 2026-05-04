@@ -1,6 +1,8 @@
 package com.pragma.plazoletaservice.application.handler;
 
 import com.pragma.plazoletaservice.application.dto.DishDTO;
+import com.pragma.plazoletaservice.application.dto.DishResponseDto;
+import com.pragma.plazoletaservice.application.dto.PaginatedResponse;
 import com.pragma.plazoletaservice.application.mapper.IDishMapper;
 import com.pragma.plazoletaservice.domain.api.IDishServicePort;
 import lombok.AllArgsConstructor;
@@ -15,11 +17,15 @@ public class DishHandler implements IDishHandler {
 
     @Override
     public void createDish(DishDTO dto) {
-        dishServicePort.createDish(mapper.toDomain(dto),dto.getRestaurantId());
+        dishServicePort.createDish(mapper.toDomain(dto),dto.getRestaurantId(),dto.getCategoryId());
     }
 
     @Override
     public void updateDish(DishDTO dto) {
         dishServicePort.updateDish(mapper.toDomain(dto),dto.getRestaurantId());
+    }
+    @Override
+    public PaginatedResponse<DishResponseDto> getDishesByRestaurant(Long restaurantId, Long categoryId, int page, int size) {
+        return dishServicePort.getDishes(restaurantId, categoryId, page, size);
     }
 }

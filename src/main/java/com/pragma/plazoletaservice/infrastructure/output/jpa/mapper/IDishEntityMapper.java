@@ -15,6 +15,7 @@ public interface IDishEntityMapper {
     DishEntity toEntity(Dish dish);
 
     @Mapping(source = "restaurantEntity", target = "restaurant")
+    @Mapping(source = "category", target = "category")
     Dish toDomain(DishEntity dishEntity);
 
     default RestaurantEntity map(Restaurant restaurant) {

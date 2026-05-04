@@ -13,19 +13,19 @@ public class Dish {
     private Integer price;
     private String description;
     private String urlImage;
-    private String category;
+    private Category category;
     private Boolean active;
     private Restaurant restaurant;
 
 
 
 
-    public Dish(Long id, String name,Integer price, String description, String urlImage,String category, Restaurant restaurant) {
+    public Dish(Long id, String name,Integer price, String description, String urlImage,Category category, Restaurant restaurant) {
 
         validatePrice(price);
         validateName(name);
         validateDescription(description);
-        validateCategory(category);
+
         this.id = id;
         this.name = name;
         this.price = price;
@@ -53,10 +53,11 @@ public class Dish {
         }
     }
 
-    private void validateCategory(String category) {
-        if (category == null || category.trim().isEmpty()) {
+    public void setCategory(Category category) {
+        if (category == null || category.getName() == null || category.getName().trim().isEmpty()) {
             throw new DomainException(DomainConstants.MSG_DISH_CATEGORY_CANNOT_BE_BLANK);
         }
+        this.category = category;
     }
 
 }
