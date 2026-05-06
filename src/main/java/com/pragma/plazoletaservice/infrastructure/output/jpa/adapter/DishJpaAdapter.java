@@ -11,6 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -50,4 +52,9 @@ public class DishJpaAdapter implements IDishPersistencePort {
         return resultPage.map(dishMapper::toDomain);
     }
 
+    @Override
+    public List<Dish> getDishesByIds(List<Long> dishIds, Long restaurant){
+        List<DishEntity> dishEntities = dishRepository.findAllByIdInAndRestaurantEntityId(dishIds, restaurant);
+        return dishEntities.stream().map(dishMapper::toDomain).toList() ;
+    }
 }

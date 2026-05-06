@@ -3,9 +3,13 @@ package com.pragma.plazoletaservice.domain.constants;
 public class DomainConstants {
 
 
-
     private DomainConstants() {
     }
+
+    public static final String MSG_ORDER_RESTAURANT_ID_CANNOT_BE_NULL = "Restaurant ID cannot be null";
+    public static final String MSG_SOME_DISHES_NOT_FOUND_IN_RESTAURANT = "Some dishes not found in the specified restaurant";
+    public static final String MSG_CLIENT_HAS_ACTIVE_ORDER = "Client already has an active order";
+    public static final String MSG_ORDER_MUST_AT_LEAST_ONE_DISH = "An order must contain at least one dish";
     public static final String MSG_CATEGORY_N0T_FOUND = "Category not found";
     public static final String MSG_CATEGORY_ID_CANNOT_BE_NULL = "Category ID cannot be null";
     public static final String ONLY_OWNER_CAN_CREATE_EMPLOYEES = "Only restaurant owners can create employees";

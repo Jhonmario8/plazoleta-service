@@ -3,10 +3,13 @@ package com.pragma.plazoletaservice.application.constants;
 public class ApplicationConstants {
 
 
-
-
     private ApplicationConstants() {
     }
+
+    public static final String ORDER_RESTAURANT_ID_CANNOT_BE_NULL = "Restaurant ID cannot be null";
+    public static final String ORDER_DISHES_CANNOT_BE_EMPTY = "Order must contain at least one dish";
+    public static final String ORDER_DISH_ID_CANNOT_BE_NULL = "Dish ID cannot be null";
+    public static final String ORDER_DISH_QUANTITY_CANNOT_BE_NULL = "Dish quantity cannot be null";
     public static final String MSG_CATEGORY_NAME_REQUIRED = "Category name is required";
     public static final String MSG_CATEGORY_ALREADY_EXISTS = "Category with the same name already exists";
     public static final String NAME_CANNOT_BE_BLANK = "Name cannot be blank";
