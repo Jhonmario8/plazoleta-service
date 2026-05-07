@@ -8,6 +8,7 @@ import com.pragma.plazoletaservice.domain.api.IOrderServicePort;
 import com.pragma.plazoletaservice.domain.api.IUserServicePort;
 import com.pragma.plazoletaservice.domain.constants.DomainConstants;
 import com.pragma.plazoletaservice.domain.exception.DomainException;
+import com.pragma.plazoletaservice.domain.exception.NotFoundException;
 import com.pragma.plazoletaservice.domain.exception.UnauthorizedException;
 import com.pragma.plazoletaservice.domain.model.*;
 import com.pragma.plazoletaservice.domain.spi.IDishPersistencePort;
@@ -62,8 +63,51 @@ public class OrderUseCase implements IOrderServicePort {
         );
     }
 
+    @Override
+    public void assignEmployeeToOrder(Long orderId, Long employeeId) {
+        Order order = orderPersistencePort.getOrderById(orderId)
+                .orElseThrow(() -> new NotFoundException(DomainConstants.MSG_ORDER_NOT_FOUND));
 
+        validateOrderIsAssignable(order);
+        validateEmployeeIdIsEmpty(order);
+        validateEmployeeFromSameRestaurant(employeeId, order.getRestaurantId());
 
+        order.setEmployeeId(employeeId);
+        order.setStatus(OrderStatus.IN_PREPARATION);
+        orderPersistencePort.saveOrder(order);
+    }
+
+    @Override
+    public void updateOrderStatus(Long orderId, OrderStatus status) {
+        Order order = orderPersistencePort.getOrderById(orderId)
+                .orElseThrow(() -> new NotFoundException(DomainConstants.MSG_ORDER_NOT_FOUND));
+
+        order.setStatus(status);
+        orderPersistencePort.saveOrder(order);
+    }
+
+    private void  validateEmployeeFromSameRestaurant(Long employeeId, Long restaurantId) {
+        Employee employee = userServicePort.getUserById(employeeId)
+                .orElseThrow(() -> new NotFoundException(DomainConstants.MSG_EMPLOYEE_NOT_FOUND));
+        if (employee.getRole() != Role.EMPLOYEE) {
+            throw new DomainException(DomainConstants.MSG_USER_IS_NOT_EMPLOYEE);
+        }
+        if (employee.getRestaurantId() == null || !employee.getRestaurantId().equals(restaurantId)) {
+            throw new DomainException(DomainConstants.MSG_EMPLOYEE_NOT_FROM_SAME_RESTAURANT);
+        }
+    }
+
+    private void validateEmployeeIdIsEmpty(Order order) {
+        if (order.getEmployeeId() != null) {
+            throw new DomainException(DomainConstants.MSG_ORDER_ALREADY_ASSIGNED);
+        }
+    }
+
+    private void validateOrderIsAssignable(Order order){
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new DomainException(DomainConstants.MSG_ONLY_PENDING_ORDERS_CAN_BE_ASSIGNED);
+        }
+    }
     private void validateClientHasNoActiveOrders(Long clientId) {
         if (orderPersistencePort.existsActiveOrderByClientId(clientId)) {
             throw new DomainException(DomainConstants.MSG_CLIENT_HAS_ACTIVE_ORDER);

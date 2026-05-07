@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.Optional;
+
 @FeignClient(name = "user-service", url = "${user-service.url}", configuration = FeignConfig.class)
 public interface UserClient {
 
@@ -17,4 +19,8 @@ public interface UserClient {
 
     @PostMapping("/users/employee")
     void createEmployee(Employee employee);
+
+    @GetMapping("/users/{id}")
+    Optional<Employee> getUserById(@PathVariable Long id);
+
 }

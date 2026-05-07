@@ -7,6 +7,8 @@ import com.pragma.plazoletaservice.domain.model.Role;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 @AllArgsConstructor
 public class UserServiceAdapter implements IUserServicePort {
@@ -21,5 +23,10 @@ public class UserServiceAdapter implements IUserServicePort {
     @Override
     public void createEmployee(Employee employee) {
         userClient.createEmployee(employee);
+    }
+
+    @Override
+    public Optional<Employee> getUserById(Long id) {
+        return userClient.getUserById(id);
     }
 }

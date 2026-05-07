@@ -11,6 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class OrderJpaAdapter implements IOrderPersistencePort {
@@ -27,6 +29,7 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
         }
         orderRepository.save(entity);
     }
+
     @Override
     public boolean existsActiveOrderByClientId(Long clientId) {
         return orderRepository.existsByClientId(clientId);
@@ -37,4 +40,11 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
         Page<OrderEntity> orderEntities = orderRepository.findAllByRestaurantIdAndStatus(restaurantId, status, PageRequest.of(page, size));
         return orderEntities.map(orderMapper::toDomain);
     }
+    @Override
+    public Optional<Order> getOrderById(Long orderId) {
+        Optional<OrderEntity> orderEntity = orderRepository.findById(orderId);
+        return orderEntity.map(orderMapper::toDomain);
+    }
+
+
 }

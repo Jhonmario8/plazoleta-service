@@ -8,5 +8,10 @@ import com.pragma.plazoletaservice.domain.model.OrderStatus;
 
 public interface IOrderServicePort {
     void createOrder(Order order);
+
     PaginatedResponseDto<OrderDto> getOrders(Long restaurantId, OrderStatus status, int page, int size);
+
+    void assignEmployeeToOrder(Long orderId, Long employeeId);
+
+    void updateOrderStatus(Long orderId, OrderStatus status);
 }

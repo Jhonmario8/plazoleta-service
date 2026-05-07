@@ -23,6 +23,7 @@ public class OrderDto {
     @NotNull(message = ApplicationConstants.ORDER_RESTAURANT_ID_CANNOT_BE_NULL)
     private Long restaurantId;
     private Long clientId;
+    private Long employeeId;
     private LocalDateTime date;
     private String status;
 

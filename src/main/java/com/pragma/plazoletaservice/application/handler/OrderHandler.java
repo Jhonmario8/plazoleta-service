@@ -24,4 +24,14 @@ public class OrderHandler implements IOrderHandler{
     public PaginatedResponseDto<OrderDto> getOrders(Long restaurantId, OrderStatus status, int page, int size) {
         return orderServicePort.getOrders(restaurantId, status, page, size);
     }
+
+    @Override
+    public void assignEmployeeToOrder(Long orderId, Long employeeId) {
+        orderServicePort.assignEmployeeToOrder(orderId, employeeId);
+    }
+
+    @Override
+    public void updateOrderStatus(Long orderId, OrderStatus status) {
+        orderServicePort.updateOrderStatus(orderId, status);
+    }
 }

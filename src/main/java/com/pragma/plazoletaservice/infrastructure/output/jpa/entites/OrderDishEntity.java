@@ -1,6 +1,8 @@
 package com.pragma.plazoletaservice.infrastructure.output.jpa.entites;
 
+import com.pragma.plazoletaservice.infrastructure.constants.InfrastructureConstants;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,9 +24,9 @@ public class OrderDishEntity {
     @JoinColumn(name = "order_id")
     private OrderEntity order;
 
-    @ManyToOne
-    @JoinColumn(name = "dish_id")
-    private DishEntity dish;
+    @Column(nullable = false)
+    private Long dishId;
 
+    @NotNull(message = InfrastructureConstants.MSG_QUANTITY_NOT_NULL)
     private Integer quantity;
 }

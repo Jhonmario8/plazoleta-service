@@ -21,15 +21,18 @@ public class OrderEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @Column(nullable = false)
+    private Long restaurantId;
+    @Column(nullable = false)
     private Long clientId;
+
+    private Long employeeId;
+    @Column(nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime date;
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-    @ManyToOne
-    @JoinColumn(name = "restaurant_id")
-    private RestaurantEntity restaurant;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderDishEntity> orderDishes;

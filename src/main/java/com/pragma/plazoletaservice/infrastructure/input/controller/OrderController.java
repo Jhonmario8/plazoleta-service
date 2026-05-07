@@ -34,4 +34,15 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
+    @PutMapping("/{orderId}/assign/{employeeId}")
+    public ResponseEntity<Void> assignEmployeeToOrder(@PathVariable Long orderId, @PathVariable Long employeeId) {
+        orderHandler.assignEmployeeToOrder(orderId, employeeId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{orderId}/status")
+    public ResponseEntity<Void> updateOrderStatus(@PathVariable Long orderId, @RequestParam OrderStatus status) {
+        orderHandler.updateOrderStatus(orderId, status);
+        return ResponseEntity.ok().build();
+    }
 }

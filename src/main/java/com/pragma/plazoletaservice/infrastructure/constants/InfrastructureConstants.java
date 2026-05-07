@@ -5,6 +5,8 @@ public class InfrastructureConstants {
 
     private InfrastructureConstants() {
     }
+
+    public static final String MSG_QUANTITY_NOT_NULL = "Quantity cannot be null";
     public static final String MSG_TOKEN_EXPIRED = "Token expired";
     public static final String MSG_TOKEN_INVALID = "Invalid token";
 

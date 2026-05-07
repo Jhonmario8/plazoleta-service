@@ -6,8 +6,17 @@ public class DomainConstants {
 
 
     private DomainConstants() {
+
     }
 
+    public static final String MSG_USER_IS_NOT_EMPLOYEE = "User is not an employee";
+    public static final String MSG_EMPLOYEE_NOT_FOUND = "Employee not found";
+    public static final String MSG_ORDER_STATUS_CANNOT_BE_NULL = "Order status cannot be null";
+    public static final String MSG_EMPLOYEE_NOT_FROM_SAME_RESTAURANT = "Employee does not belong to the same restaurant as the order";
+    public static final String MSG_ORDER_ALREADY_ASSIGNED = "Order is already assigned to an employee";
+    public static final String MSG_ORDER_NOT_FOUND = "Order not found";
+    public static final String MSG_ONLY_PENDING_ORDERS_CAN_BE_ASSIGNED = "Only pending orders can be assigned to employees";
+    public static final String MSG_ORDER_EMPLOYEE_ID_CANNOT_BE_NULL = "Employee ID cannot be null ";
     public static final String MSG_ONLY_EMPLOYEE_CAN_GET_ORDERS = "Only employees can view orders";
     public static final String MSG_ORDER_RESTAURANT_ID_CANNOT_BE_NULL = "Restaurant ID cannot be null";
     public static final String MSG_SOME_DISHES_NOT_FOUND_IN_RESTAURANT = "Some dishes not found in the specified restaurant";

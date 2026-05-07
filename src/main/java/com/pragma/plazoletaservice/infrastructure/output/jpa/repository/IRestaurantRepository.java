@@ -16,4 +16,5 @@ public interface IRestaurantRepository extends JpaRepository<RestaurantEntity, L
     boolean existsByPhoneNumber(String phoneNumber);
     Optional<RestaurantEntity>  findByOwnerId(Long ownerId);
     Page<RestaurantEntity> findAllByOrderByNameAsc(Pageable pageable);
+
 }
