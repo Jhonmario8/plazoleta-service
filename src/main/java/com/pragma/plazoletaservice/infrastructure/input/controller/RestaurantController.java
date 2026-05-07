@@ -2,7 +2,7 @@ package com.pragma.plazoletaservice.infrastructure.input.controller;
 
 
 import com.pragma.plazoletaservice.application.dto.EmployeeRequestDTO;
-import com.pragma.plazoletaservice.application.dto.PaginatedResponse;
+import com.pragma.plazoletaservice.application.dto.PaginatedResponseDto;
 import com.pragma.plazoletaservice.application.dto.RestaurantDTO;
 import com.pragma.plazoletaservice.application.dto.RestaurantResponseDto;
 import com.pragma.plazoletaservice.application.handler.IRestaurantHandler;
@@ -33,7 +33,7 @@ public class RestaurantController {
     }
 
     @GetMapping("/restaurants")
-    public ResponseEntity<PaginatedResponse<RestaurantResponseDto>> getRestaurants(
+    public ResponseEntity<PaginatedResponseDto<RestaurantResponseDto>> getRestaurants(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(restaurantHandler.getRestaurants(page, size));

@@ -16,8 +16,16 @@ public interface IOrderEntityMapper {
     @Mapping(target = "orderDishes", source = "dishes")
     OrderEntity toEntity(Order order);
 
+    @Mapping(target = "restaurantId", source = "restaurant.id")
+    @Mapping(target = "dishes", source = "orderDishes")
+    Order toDomain(OrderEntity orderEntity);
+
     @Mapping(target = "dish", source = "dishId")
     OrderDishEntity toOrderDishEntity(OrderDish orderDish);
+
+
+    @Mapping(target = "dishId", source = "dish.id")
+    OrderDish toOrderDishDomain(OrderDishEntity orderDishEntity);
 
     default DishEntity map(Long value) {
         if (value == null) {

@@ -1,5 +1,6 @@
 package com.pragma.plazoletaservice.application.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pragma.plazoletaservice.application.constants.ApplicationConstants;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class OrderDishDto {
 
     private Long id;

@@ -1,6 +1,6 @@
 package com.pragma.plazoletaservice.application.usecase;
 
-import com.pragma.plazoletaservice.application.dto.PaginatedResponse;
+import com.pragma.plazoletaservice.application.dto.PaginatedResponseDto;
 import com.pragma.plazoletaservice.application.dto.RestaurantResponseDto;
 import com.pragma.plazoletaservice.application.mapper.IRestaurantMapper;
 import com.pragma.plazoletaservice.domain.api.IAuthenticationPort;
@@ -66,7 +66,7 @@ public class RestaurantUseCase implements IRestaurantServicePort {
     }
 
     @Override
-    public PaginatedResponse<RestaurantResponseDto> getRestaurants(int page, int size) {
+    public PaginatedResponseDto<RestaurantResponseDto> getRestaurants(int page, int size) {
 
         Page<Restaurant> restaurantPage = restaurantPersistencePort.getRestaurants(PageRequest.of(page, size));
 
@@ -74,7 +74,7 @@ public class RestaurantUseCase implements IRestaurantServicePort {
                 .stream()
                 .map(restaurantMapper::toResponse)
                 .toList();
-        return new PaginatedResponse<>(
+        return new PaginatedResponseDto<>(
                 content,
                 restaurantPage.getNumber(),
                 restaurantPage.getSize(),

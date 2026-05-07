@@ -1,7 +1,7 @@
 package com.pragma.plazoletaservice.application.handler;
 
 import com.pragma.plazoletaservice.application.dto.EmployeeRequestDTO;
-import com.pragma.plazoletaservice.application.dto.PaginatedResponse;
+import com.pragma.plazoletaservice.application.dto.PaginatedResponseDto;
 import com.pragma.plazoletaservice.application.dto.RestaurantDTO;
 import com.pragma.plazoletaservice.application.dto.RestaurantResponseDto;
 import com.pragma.plazoletaservice.application.mapper.IEmployeeMapper;
@@ -29,7 +29,7 @@ public class RestaurantHandler implements IRestaurantHandler{
     }
 
     @Override
-    public PaginatedResponse<RestaurantResponseDto> getRestaurants(int page, int size) {
+    public PaginatedResponseDto<RestaurantResponseDto> getRestaurants(int page, int size) {
         return restaurantServicePort.getRestaurants(page, size);
     }
 }

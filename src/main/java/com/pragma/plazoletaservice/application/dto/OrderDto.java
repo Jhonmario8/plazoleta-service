@@ -1,7 +1,7 @@
 package com.pragma.plazoletaservice.application.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pragma.plazoletaservice.application.constants.ApplicationConstants;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -16,15 +16,16 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class OrderDto {
     private Long id;
 
     @NotNull(message = ApplicationConstants.ORDER_RESTAURANT_ID_CANNOT_BE_NULL)
     private Long restaurantId;
+    private Long clientId;
     private LocalDateTime date;
     private String status;
 
     @NotEmpty(message = ApplicationConstants.ORDER_DISHES_CANNOT_BE_EMPTY)
-    @Valid
     private List<OrderDishDto> dishes;
 }

@@ -2,7 +2,7 @@ package com.pragma.plazoletaservice.infrastructure.input.controller;
 
 import com.pragma.plazoletaservice.application.dto.DishDTO;
 import com.pragma.plazoletaservice.application.dto.DishResponseDto;
-import com.pragma.plazoletaservice.application.dto.PaginatedResponse;
+import com.pragma.plazoletaservice.application.dto.PaginatedResponseDto;
 import com.pragma.plazoletaservice.application.handler.ICategoryHandler;
 import com.pragma.plazoletaservice.application.handler.IDishHandler;
 import jakarta.validation.Valid;
@@ -37,7 +37,7 @@ public class DishController {
     }
 
     @GetMapping("/restaurants/{restaurantId}/dishes")
-    public ResponseEntity<PaginatedResponse<DishResponseDto>> getDishesByRestaurant(
+    public ResponseEntity<PaginatedResponseDto<DishResponseDto>> getDishesByRestaurant(
             @PathVariable Long restaurantId,
             @RequestParam(required = false) Long categoryId,
             @RequestParam(defaultValue = "0") int page,

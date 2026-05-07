@@ -1,8 +1,10 @@
 package com.pragma.plazoletaservice.application.handler;
 
 import com.pragma.plazoletaservice.application.dto.OrderDto;
+import com.pragma.plazoletaservice.application.dto.PaginatedResponseDto;
 import com.pragma.plazoletaservice.application.mapper.IOrderMapper;
 import com.pragma.plazoletaservice.domain.api.IOrderServicePort;
+import com.pragma.plazoletaservice.domain.model.OrderStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,5 +18,10 @@ public class OrderHandler implements IOrderHandler{
     @Override
     public void createOrder(OrderDto orderDto) {
         orderServicePort.createOrder(mapper.toDomain(orderDto));
+    }
+
+    @Override
+    public PaginatedResponseDto<OrderDto> getOrders(Long restaurantId, OrderStatus status, int page, int size) {
+        return orderServicePort.getOrders(restaurantId, status, page, size);
     }
 }
