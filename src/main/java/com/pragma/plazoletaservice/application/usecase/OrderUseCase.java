@@ -5,6 +5,7 @@ import com.pragma.plazoletaservice.application.dto.PaginatedResponseDto;
 import com.pragma.plazoletaservice.application.mapper.IOrderMapper;
 import com.pragma.plazoletaservice.domain.api.IAuthenticationPort;
 import com.pragma.plazoletaservice.domain.api.IOrderServicePort;
+import com.pragma.plazoletaservice.domain.api.ISmsServicePort;
 import com.pragma.plazoletaservice.domain.api.IUserServicePort;
 import com.pragma.plazoletaservice.domain.constants.DomainConstants;
 import com.pragma.plazoletaservice.domain.exception.DomainException;
@@ -30,6 +31,7 @@ public class OrderUseCase implements IOrderServicePort {
     private final IDishPersistencePort dishPersistencePort;
     private final IUserServicePort userServicePort;
     private final IOrderMapper mapper;
+    private final ISmsServicePort smsServicePort;
     @Override
     public void createOrder(Order order) {
 
@@ -82,6 +84,12 @@ public class OrderUseCase implements IOrderServicePort {
         Order order = orderPersistencePort.getOrderById(orderId)
                 .orElseThrow(() -> new NotFoundException(DomainConstants.MSG_ORDER_NOT_FOUND));
 
+        Employee client = userServicePort.getUserById(order.getClientId())
+                .orElseThrow(() -> new NotFoundException(DomainConstants.MSG_CLIENT_NOT_FOUND));
+        String phoneNumber = "+57" + client.getPhoneNumber();
+        if (status == OrderStatus.READY){
+            smsServicePort.sendSms(new Sms(phoneNumber, DomainConstants.MSG_SMS_ORDER_READY));
+        }
         order.setStatus(status);
         orderPersistencePort.saveOrder(order);
     }

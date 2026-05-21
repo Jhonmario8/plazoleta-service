@@ -20,4 +20,5 @@ spring:
       secret: ${PRAGMA_JWT_KEY}
 
 user-service:
-  url: http://localhost:8080
+  url-users: http://localhost:8080
+  url-sms: http://localhost:8082

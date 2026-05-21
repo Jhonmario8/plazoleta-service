@@ -3,6 +3,8 @@ package com.pragma.plazoletaservice.application.constants;
 public class ApplicationConstants {
 
 
+
+
     private ApplicationConstants() {
     }
 

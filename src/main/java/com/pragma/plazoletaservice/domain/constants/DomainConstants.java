@@ -3,12 +3,12 @@ package com.pragma.plazoletaservice.domain.constants;
 public class DomainConstants {
 
 
-
-
     private DomainConstants() {
 
     }
 
+    public static final String MSG_SMS_ORDER_READY = "Your order is ready for pickup!";
+    public static final String MSG_CLIENT_NOT_FOUND = "Client not found";
     public static final String MSG_USER_IS_NOT_EMPLOYEE = "User is not an employee";
     public static final String MSG_EMPLOYEE_NOT_FOUND = "Employee not found";
     public static final String MSG_ORDER_STATUS_CANNOT_BE_NULL = "Order status cannot be null";

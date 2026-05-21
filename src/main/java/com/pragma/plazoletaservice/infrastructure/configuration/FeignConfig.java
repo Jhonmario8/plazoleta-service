@@ -14,7 +14,7 @@ public class FeignConfig {
         return requestTemplate -> {
             var authentication = SecurityContextHolder.getContext().getAuthentication();
 
-            if (authentication != null && authentication.getDetails() != null){
+            if (authentication != null && authentication.getCredentials() != null){
                 String token = authentication.getCredentials().toString();
                 requestTemplate.header("Authorization", "Bearer " + token);
             }
