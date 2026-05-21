@@ -9,4 +9,6 @@ public interface IOrderHandler {
         PaginatedResponseDto<OrderDto> getOrders(Long restaurantId, OrderStatus status, int page, int size);
         void assignEmployeeToOrder(Long orderId, Long employeeId);
         void updateOrderStatus(Long orderId, OrderStatus status);
+        void cancelOrder(Long orderId);
+        void deliverOrder(Long orderId, Integer orderCode);
 }

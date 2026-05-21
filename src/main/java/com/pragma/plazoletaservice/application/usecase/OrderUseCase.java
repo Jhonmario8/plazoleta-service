@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Random;
 
 
 @Service
@@ -32,6 +33,7 @@ public class OrderUseCase implements IOrderServicePort {
     private final IUserServicePort userServicePort;
     private final IOrderMapper mapper;
     private final ISmsServicePort smsServicePort;
+
     @Override
     public void createOrder(Order order) {
 
@@ -86,15 +88,88 @@ public class OrderUseCase implements IOrderServicePort {
 
         Employee client = userServicePort.getUserById(order.getClientId())
                 .orElseThrow(() -> new NotFoundException(DomainConstants.MSG_CLIENT_NOT_FOUND));
-        String phoneNumber = "+57" + client.getPhoneNumber();
-        if (status == OrderStatus.READY){
-            smsServicePort.sendSms(new Sms(phoneNumber, DomainConstants.MSG_SMS_ORDER_READY));
+
+        validateStatus(status, order.getStatus());
+
+
+        String phoneNumber = "whatsapp:+57" + client.getPhoneNumber();
+        if (status == OrderStatus.READY) {
+            Random random = new Random();
+            int orderCode = random.nextInt(9000) + 1000;
+            smsServicePort.sendSms(new Sms(phoneNumber, DomainConstants.MSG_SMS_ORDER_READY + orderCode));
+            order.setOrderCode(orderCode);
         }
+
         order.setStatus(status);
         orderPersistencePort.saveOrder(order);
     }
 
-    private void  validateEmployeeFromSameRestaurant(Long employeeId, Long restaurantId) {
+    @Override
+    public void cancelOrder(Long orderId) {
+        Order order = orderPersistencePort.getOrderById(orderId)
+                .orElseThrow(() -> new NotFoundException(DomainConstants.MSG_ORDER_NOT_FOUND));
+
+        Employee client = userServicePort.getUserById(order.getClientId())
+                .orElseThrow(() -> new NotFoundException(DomainConstants.MSG_CLIENT_NOT_FOUND));
+
+        String phoneNumber = "whatsapp:+57" + client.getPhoneNumber();
+
+        if (order.getStatus() != OrderStatus.PENDING) {
+            smsServicePort.sendSms(new Sms(phoneNumber, DomainConstants.MSG_ONLY_PENDING_ORDERS_CAN_BE_CANCELLED));
+            throw new DomainException(DomainConstants.MSG_ONLY_PENDING_ORDERS_CAN_BE_CANCELLED);
+        }
+
+        smsServicePort.sendSms(new Sms(phoneNumber, DomainConstants.MSG_SMS_ORDER_CANCELLED));
+        order.setStatus(OrderStatus.CANCELLED);
+        orderPersistencePort.saveOrder(order);
+    }
+
+    @Override
+    public void deliverOrder(Long orderId, Integer orderCode) {
+        Order order = orderPersistencePort.getOrderById(orderId)
+                .orElseThrow(() -> new NotFoundException(DomainConstants.MSG_ORDER_NOT_FOUND));
+
+        Employee client = userServicePort.getUserById(order.getClientId())
+                .orElseThrow(() -> new NotFoundException(DomainConstants.MSG_CLIENT_NOT_FOUND));
+
+        String phoneNumber = "whatsapp:+57" + client.getPhoneNumber();
+
+        if (order.getStatus() != OrderStatus.READY) {
+            throw new DomainException(DomainConstants.MSG_ONLY_READY_ORDERS_CAN_BE_DELIVERED);
+        }
+
+        if (!orderCode.equals(order.getOrderCode())) {
+            throw new DomainException(DomainConstants.MSG_INVALID_ORDER_CODE);
+        }
+        smsServicePort.sendSms(new Sms(phoneNumber, DomainConstants.MSG_SMS_ORDER_DELIVERED));
+        order.setStatus(OrderStatus.DELIVERED);
+        orderPersistencePort.saveOrder(order);
+    }
+
+    private void validateStatus(OrderStatus requestStatus, OrderStatus orderStatus ) {
+
+        if (requestStatus == OrderStatus.IN_PREPARATION && orderStatus != OrderStatus.PENDING) {
+            throw new DomainException(DomainConstants.MSG_ONLY_PENDING_ORDERS_CAN_BE_IN_PREPARATION);
+        }
+
+       if (requestStatus == OrderStatus.READY && orderStatus != OrderStatus.IN_PREPARATION) {
+           throw new DomainException(DomainConstants.MSG_ONLY_IN_PREPARATION_ORDERS_CAN_BE_READY);
+       }
+
+        if (requestStatus == OrderStatus.DELIVERED ) {
+            throw new DomainException(DomainConstants.MSG_WRONG_METHOD_FOR_DELIVERING_ORDER);
+        }
+
+
+        if(requestStatus == OrderStatus.CANCELLED && orderStatus != OrderStatus.PENDING) {
+            throw new DomainException(DomainConstants.MSG_ONLY_PENDING_ORDERS_CAN_BE_CANCELLED);
+        }
+
+        if (requestStatus == OrderStatus.PENDING){
+            throw new DomainException(DomainConstants.MSG_ORDER_STATUS_CANNOT_BE_PENDING);
+        }
+    }
+    private void validateEmployeeFromSameRestaurant(Long employeeId, Long restaurantId) {
         Employee employee = userServicePort.getUserById(employeeId)
                 .orElseThrow(() -> new NotFoundException(DomainConstants.MSG_EMPLOYEE_NOT_FOUND));
         if (employee.getRole() != Role.EMPLOYEE) {
@@ -111,11 +186,12 @@ public class OrderUseCase implements IOrderServicePort {
         }
     }
 
-    private void validateOrderIsAssignable(Order order){
+    private void validateOrderIsAssignable(Order order) {
         if (order.getStatus() != OrderStatus.PENDING) {
             throw new DomainException(DomainConstants.MSG_ONLY_PENDING_ORDERS_CAN_BE_ASSIGNED);
         }
     }
+
     private void validateClientHasNoActiveOrders(Long clientId) {
         if (orderPersistencePort.existsActiveOrderByClientId(clientId)) {
             throw new DomainException(DomainConstants.MSG_CLIENT_HAS_ACTIVE_ORDER);

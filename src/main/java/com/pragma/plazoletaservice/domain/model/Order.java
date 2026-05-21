@@ -20,6 +20,7 @@ public class Order {
     private Long employeeId;
     private LocalDateTime date;
     private OrderStatus status;
+    private Integer orderCode;
     private List<OrderDish> dishes;
 
     public Order(Long id, Long restaurantId, Long clientId, LocalDateTime date, OrderStatus status, List<OrderDish> dishes) {

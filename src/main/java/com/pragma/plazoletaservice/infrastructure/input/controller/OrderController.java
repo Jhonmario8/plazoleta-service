@@ -45,4 +45,17 @@ public class OrderController {
         orderHandler.updateOrderStatus(orderId, status);
         return ResponseEntity.ok().build();
     }
+
+    @PutMapping("/{orderId}/cancel")
+    public ResponseEntity<Void> cancelOrder(@PathVariable Long orderId) {
+        orderHandler.cancelOrder(orderId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{orderId}/deliver")
+    public ResponseEntity<Void> deliverOrder(@PathVariable Long orderId, @RequestParam Integer orderCode) {
+        orderHandler.deliverOrder(orderId, orderCode);
+        return ResponseEntity.ok().build();
+    }
+
 }

@@ -14,4 +14,8 @@ public interface IOrderServicePort {
     void assignEmployeeToOrder(Long orderId, Long employeeId);
 
     void updateOrderStatus(Long orderId, OrderStatus status);
+
+    void deliverOrder(Long orderId, Integer orderCode);
+
+    void cancelOrder(Long orderId);
 }

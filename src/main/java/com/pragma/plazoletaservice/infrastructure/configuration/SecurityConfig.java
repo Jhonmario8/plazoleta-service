@@ -29,7 +29,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST,  "/dishes").hasRole("OWNER")
                         .requestMatchers(HttpMethod.PUT, "/dishes").hasRole("OWNER")
                         .requestMatchers(HttpMethod.GET, "/orders").hasRole("EMPLOYEE")
-                        .requestMatchers(HttpMethod.PUT, "/orders").hasRole("EMPLOYEE")
+                        .requestMatchers(HttpMethod.PUT, "/orders/{orderId}/cancel").hasRole("CLIENT")
+                        .requestMatchers(HttpMethod.PUT, "/orders/**").hasRole("EMPLOYEE")
                         .anyRequest().permitAll()
                 );
         http.addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

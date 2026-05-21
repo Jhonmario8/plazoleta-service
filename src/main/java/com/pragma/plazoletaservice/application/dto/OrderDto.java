@@ -26,7 +26,7 @@ public class OrderDto {
     private Long employeeId;
     private LocalDateTime date;
     private String status;
-
+    private Integer orderCode;
     @NotEmpty(message = ApplicationConstants.ORDER_DISHES_CANNOT_BE_EMPTY)
     private List<OrderDishDto> dishes;
 }

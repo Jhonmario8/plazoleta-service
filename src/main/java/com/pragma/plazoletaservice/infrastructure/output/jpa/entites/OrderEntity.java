@@ -33,6 +33,7 @@ public class OrderEntity {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
+    private Integer orderCode;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderDishEntity> orderDishes;

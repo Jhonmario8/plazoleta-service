@@ -7,6 +7,15 @@ public class DomainConstants {
 
     }
 
+    public static final String MSG_SMS_ORDER_CANCELLED = "Your order has been cancelled. If you have any questions, please contact our support team.";
+    public static final String MSG_WRONG_METHOD_FOR_DELIVERING_ORDER = "Wrong method for delivering order. Use the correct endpoint to update the order status to delivered.";
+    public static final String MSG_SMS_ORDER_DELIVERED = "Your order has been delivered! Enjoy your meal!";
+    public static final String MSG_INVALID_ORDER_CODE = "Invalid order code";
+    public static final String MSG_ORDER_STATUS_CANNOT_BE_PENDING = "Order status cannot be set to pending";
+    public static final String MSG_ONLY_PENDING_ORDERS_CAN_BE_IN_PREPARATION = "Only pending orders can be marked as in preparation";
+    public static final String MSG_ONLY_IN_PREPARATION_ORDERS_CAN_BE_READY = "Only orders in preparation can be marked as ready";
+    public static final String MSG_ONLY_READY_ORDERS_CAN_BE_DELIVERED = "Only ready orders can be marked as delivered";
+    public static final String MSG_ONLY_PENDING_ORDERS_CAN_BE_CANCELLED = "Only pending orders can be cancelled";
     public static final String MSG_SMS_ORDER_READY = "Your order is ready for pickup!";
     public static final String MSG_CLIENT_NOT_FOUND = "Client not found";
     public static final String MSG_USER_IS_NOT_EMPLOYEE = "User is not an employee";
