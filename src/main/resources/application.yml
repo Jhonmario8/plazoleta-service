@@ -19,6 +19,7 @@ spring:
     jwt:
       secret: ${PRAGMA_JWT_KEY}
 
-user-service:
+services:
   url-users: http://localhost:8080
   url-sms: http://localhost:8082
+  url-traceability: http://localhost:8083

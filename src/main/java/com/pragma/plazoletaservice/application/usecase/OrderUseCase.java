@@ -3,10 +3,7 @@ package com.pragma.plazoletaservice.application.usecase;
 import com.pragma.plazoletaservice.application.dto.OrderDto;
 import com.pragma.plazoletaservice.application.dto.PaginatedResponseDto;
 import com.pragma.plazoletaservice.application.mapper.IOrderMapper;
-import com.pragma.plazoletaservice.domain.api.IAuthenticationPort;
-import com.pragma.plazoletaservice.domain.api.IOrderServicePort;
-import com.pragma.plazoletaservice.domain.api.ISmsServicePort;
-import com.pragma.plazoletaservice.domain.api.IUserServicePort;
+import com.pragma.plazoletaservice.domain.api.*;
 import com.pragma.plazoletaservice.domain.constants.DomainConstants;
 import com.pragma.plazoletaservice.domain.exception.DomainException;
 import com.pragma.plazoletaservice.domain.exception.NotFoundException;
@@ -33,6 +30,7 @@ public class OrderUseCase implements IOrderServicePort {
     private final IUserServicePort userServicePort;
     private final IOrderMapper mapper;
     private final ISmsServicePort smsServicePort;
+    private final ITraceabilityServicePort traceabilityServicePort;
 
     @Override
     public void createOrder(Order order) {
@@ -40,7 +38,7 @@ public class OrderUseCase implements IOrderServicePort {
         Long clientId = authenticationPort.getCurrentUserId();
         validateClientHasNoActiveOrders(clientId);
         validateDishesBelongToRestaurant(order);
-
+        createTraceabilityRecord(order.getId(), clientId, null, null, OrderStatus.PENDING.name(), LocalDateTime.now());
         order.setClientId(clientId);
         order.setStatus(OrderStatus.PENDING);
         order.setDate(LocalDateTime.now());
@@ -75,7 +73,7 @@ public class OrderUseCase implements IOrderServicePort {
         validateOrderIsAssignable(order);
         validateEmployeeIdIsEmpty(order);
         validateEmployeeFromSameRestaurant(employeeId, order.getRestaurantId());
-
+        createTraceabilityRecord(orderId, order.getClientId(), employeeId, order.getStatus().name(), OrderStatus.IN_PREPARATION.name(), LocalDateTime.now());
         order.setEmployeeId(employeeId);
         order.setStatus(OrderStatus.IN_PREPARATION);
         orderPersistencePort.saveOrder(order);
@@ -91,7 +89,10 @@ public class OrderUseCase implements IOrderServicePort {
 
         validateStatus(status, order.getStatus());
 
-
+        OrderTraceabilityRequest orderTraceabilityRequest = traceabilityServicePort.findTraceabilityById(orderId);
+        orderTraceabilityRequest.setPreviousState(orderTraceabilityRequest.getNewState());
+        orderTraceabilityRequest.setNewState(status.name());
+        traceabilityServicePort.saveTraceabilityRecord(orderTraceabilityRequest);
         String phoneNumber = "whatsapp:+57" + client.getPhoneNumber();
         if (status == OrderStatus.READY) {
             Random random = new Random();
@@ -99,7 +100,6 @@ public class OrderUseCase implements IOrderServicePort {
             smsServicePort.sendSms(new Sms(phoneNumber, DomainConstants.MSG_SMS_ORDER_READY + orderCode));
             order.setOrderCode(orderCode);
         }
-
         order.setStatus(status);
         orderPersistencePort.saveOrder(order);
     }
@@ -119,6 +119,12 @@ public class OrderUseCase implements IOrderServicePort {
             throw new DomainException(DomainConstants.MSG_ONLY_PENDING_ORDERS_CAN_BE_CANCELLED);
         }
 
+
+        OrderTraceabilityRequest orderTraceabilityRequest = traceabilityServicePort.findTraceabilityById(orderId);
+        orderTraceabilityRequest.setPreviousState(OrderStatus.PENDING.name());
+        orderTraceabilityRequest.setNewState(OrderStatus.CANCELLED.name());
+        orderTraceabilityRequest.setEndTime(LocalDateTime.now());
+        traceabilityServicePort.saveTraceabilityRecord(orderTraceabilityRequest);
         smsServicePort.sendSms(new Sms(phoneNumber, DomainConstants.MSG_SMS_ORDER_CANCELLED));
         order.setStatus(OrderStatus.CANCELLED);
         orderPersistencePort.saveOrder(order);
@@ -141,9 +147,27 @@ public class OrderUseCase implements IOrderServicePort {
         if (!orderCode.equals(order.getOrderCode())) {
             throw new DomainException(DomainConstants.MSG_INVALID_ORDER_CODE);
         }
+
+        OrderTraceabilityRequest orderTraceabilityRequest = traceabilityServicePort.findTraceabilityById(orderId);
+        orderTraceabilityRequest.setPreviousState(OrderStatus.READY.name());
+        orderTraceabilityRequest.setNewState(OrderStatus.DELIVERED.name());
+        orderTraceabilityRequest.setEndTime(LocalDateTime.now());
+        traceabilityServicePort.saveTraceabilityRecord(orderTraceabilityRequest);
+
         smsServicePort.sendSms(new Sms(phoneNumber, DomainConstants.MSG_SMS_ORDER_DELIVERED));
         order.setStatus(OrderStatus.DELIVERED);
         orderPersistencePort.saveOrder(order);
+    }
+
+    private void createTraceabilityRecord(Long orderId, Long clientId, Long employeeId, String previousState, String newState, LocalDateTime startTime) {
+        OrderTraceabilityRequest traceability = new OrderTraceabilityRequest();
+        traceability.setOrderId(orderId);
+        traceability.setClientId(clientId);
+        traceability.setEmployeeId(employeeId);
+        traceability.setPreviousState(previousState);
+        traceability.setNewState(newState);
+        traceability.setStartTime(startTime);
+        traceabilityServicePort.saveTraceabilityRecord(traceability);
     }
 
     private void validateStatus(OrderStatus requestStatus, OrderStatus orderStatus ) {

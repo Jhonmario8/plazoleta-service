@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.Optional;
 
-@FeignClient(name = "user-service", url = "${user-service.url-users}", configuration = FeignConfig.class)
+@FeignClient(name = "user-service", url = "${services.url-users}", configuration = FeignConfig.class)
 public interface UserClient {
 
     @GetMapping("/users/{id}/role")
