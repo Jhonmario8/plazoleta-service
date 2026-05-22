@@ -47,6 +47,44 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(FeignException.Unauthorized.class)
+    public ResponseEntity<ErrorResponse> handleFeignUnauthorized(FeignException.Unauthorized ex){
+        String responseBody = ex.contentUTF8(); // aquí viene el JSON del otro servicio
+
+        String message = "Unauthorized in external service";
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode node = mapper.readTree(responseBody);
+            message = node.get("message").asText();
+        } catch (Exception e) {
+            // Si no se puede parsear el mensaje, se deja el mensaje genérico
+        }
+
+        ErrorResponse error = new ErrorResponse(message, HttpStatus.UNAUTHORIZED.value());
+
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    }
+    @ExceptionHandler(FeignException.Forbidden.class)
+    public ResponseEntity<ErrorResponse> handleFeignForbidden(FeignException.Forbidden ex) {
+
+        String responseBody = ex.contentUTF8(); // aquí viene el JSON del otro servicio
+
+        String message = "Forbidden in external service";
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode node = mapper.readTree(responseBody);
+            message = node.get("message").asText();
+        } catch (Exception e) {
+            // Si no se puede parsear el mensaje, se deja el mensaje genérico
+        }
+
+        ErrorResponse error = new ErrorResponse(message, HttpStatus.FORBIDDEN.value());
+
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolation() {
         String message = InfrastructureConstants.MSG_DATA_INTEGRITY_ERROR;

@@ -121,7 +121,7 @@ public class OrderUseCase implements IOrderServicePort {
 
 
         OrderTraceabilityRequest orderTraceabilityRequest = traceabilityServicePort.findTraceabilityById(orderId);
-        orderTraceabilityRequest.setPreviousState(OrderStatus.PENDING.name());
+        orderTraceabilityRequest.setPreviousState(orderTraceabilityRequest.getNewState());
         orderTraceabilityRequest.setNewState(OrderStatus.CANCELLED.name());
         orderTraceabilityRequest.setEndTime(LocalDateTime.now());
         traceabilityServicePort.saveTraceabilityRecord(orderTraceabilityRequest);
@@ -149,7 +149,7 @@ public class OrderUseCase implements IOrderServicePort {
         }
 
         OrderTraceabilityRequest orderTraceabilityRequest = traceabilityServicePort.findTraceabilityById(orderId);
-        orderTraceabilityRequest.setPreviousState(OrderStatus.READY.name());
+        orderTraceabilityRequest.setPreviousState(orderTraceabilityRequest.getNewState());
         orderTraceabilityRequest.setNewState(OrderStatus.DELIVERED.name());
         orderTraceabilityRequest.setEndTime(LocalDateTime.now());
         traceabilityServicePort.saveTraceabilityRecord(orderTraceabilityRequest);
@@ -183,7 +183,6 @@ public class OrderUseCase implements IOrderServicePort {
         if (requestStatus == OrderStatus.DELIVERED ) {
             throw new DomainException(DomainConstants.MSG_WRONG_METHOD_FOR_DELIVERING_ORDER);
         }
-
 
         if(requestStatus == OrderStatus.CANCELLED && orderStatus != OrderStatus.PENDING) {
             throw new DomainException(DomainConstants.MSG_ONLY_PENDING_ORDERS_CAN_BE_CANCELLED);

@@ -1,33 +1,31 @@
 package com.pragma.plazoletaservice.infrastructure.configuration;
 
 import feign.RequestInterceptor;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.util.Map;
 
 @Configuration
 public class FeignConfig {
 
     @Bean
-    public RequestInterceptor requestInterceptor(){
+    public RequestInterceptor requestInterceptor() {
         return requestTemplate -> {
-            var authentication = SecurityContextHolder.getContext().getAuthentication();
 
-            if (authentication != null) {
-                Object credentials = authentication.getCredentials();
-                if (credentials != null) {
-                    String token = credentials.toString();
-                    requestTemplate.header("Authorization", "Bearer " + token);
-                }
-                Object details = authentication.getDetails();
-                if (details instanceof java.util.Map) {
-                    java.util.Map<String, Object> claims = (Map<String, Object>) details;
-                    Object tokenObj = claims.get("token");
-                    if (tokenObj != null) {
-                        requestTemplate.header("Authorization", "Bearer " + tokenObj);
-                    }
+            ServletRequestAttributes attributes =
+                    (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+
+            if (attributes != null) {
+
+                HttpServletRequest request = attributes.getRequest();
+
+                String authorizationHeader = request.getHeader("Authorization");
+
+                if (authorizationHeader != null) {
+                    requestTemplate.header("Authorization", authorizationHeader);
                 }
             }
         };
