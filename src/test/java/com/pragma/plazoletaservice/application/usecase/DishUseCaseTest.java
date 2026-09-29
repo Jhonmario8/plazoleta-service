@@ -184,14 +184,15 @@ class DishUseCaseTest {
             Restaurant restaurant = restaurant(RESTAURANT_ID);
             Dish existing = dish(DISH_ID, restaurant);
             Dish changes = new Dish(DISH_ID, "Bandeja especial", 32000, "Con chicharrón extra", "http://img.png",
-                    new Category(4L, "Especiales"), null);
+                    null, null);
             changes.setActive(false);
             when(restaurantPersistencePort.getRestaurantById(RESTAURANT_ID)).thenReturn(Optional.of(restaurant));
             when(dishPersistencePort.getDishById(DISH_ID)).thenReturn(Optional.of(existing));
             when(authenticationPort.getCurrentUserId()).thenReturn(OWNER_ID);
+            when(categoryPersistencePort.findCategoryById(4L)).thenReturn(Optional.of(new Category(4L, "Especiales")));
 
             // when
-            dishUseCase.updateDish(changes, RESTAURANT_ID);
+            dishUseCase.updateDish(changes, RESTAURANT_ID, 4L);
 
             // then
             assertThat(existing.getName()).isEqualTo("Bandeja especial");
@@ -200,6 +201,44 @@ class DishUseCaseTest {
             assertThat(existing.getCategory().getName()).isEqualTo("Especiales");
             assertThat(existing.getActive()).isFalse();
             verify(dishPersistencePort).saveDish(existing);
+        }
+
+        @Test
+        @DisplayName("actualiza el plato aunque el DTO mapeado no traiga objeto categoría (como produce IDishMapper)")
+        void updatesDishMappedWithoutCategory() {
+            // given
+            Restaurant restaurant = restaurant(RESTAURANT_ID);
+            Dish existing = dish(DISH_ID, restaurant);
+            Dish mappedFromDto = new Dish(DISH_ID, "Bandeja especial", 32000, "Con chicharrón extra", "http://img.png", null, null);
+            when(restaurantPersistencePort.getRestaurantById(RESTAURANT_ID)).thenReturn(Optional.of(restaurant));
+            when(dishPersistencePort.getDishById(DISH_ID)).thenReturn(Optional.of(existing));
+            when(authenticationPort.getCurrentUserId()).thenReturn(OWNER_ID);
+
+            // when
+            dishUseCase.updateDish(mappedFromDto, RESTAURANT_ID, null);
+
+            // then
+            assertThat(existing.getName()).isEqualTo("Bandeja especial");
+            assertThat(existing.getCategory().getName()).isEqualTo("Carnes");
+            verify(categoryPersistencePort, never()).findCategoryById(any());
+            verify(dishPersistencePort).saveDish(existing);
+        }
+
+        @Test
+        @DisplayName("lanza NotFoundException si la nueva categoría no existe")
+        void throwsWhenNewCategoryNotFound() {
+            // given
+            Restaurant restaurant = restaurant(RESTAURANT_ID);
+            when(restaurantPersistencePort.getRestaurantById(RESTAURANT_ID)).thenReturn(Optional.of(restaurant));
+            when(dishPersistencePort.getDishById(DISH_ID)).thenReturn(Optional.of(dish(DISH_ID, restaurant)));
+            when(authenticationPort.getCurrentUserId()).thenReturn(OWNER_ID);
+            when(categoryPersistencePort.findCategoryById(99L)).thenReturn(Optional.empty());
+
+            // when / then
+            assertThatThrownBy(() -> dishUseCase.updateDish(dish(DISH_ID, null), RESTAURANT_ID, 99L))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage(DomainConstants.MSG_CATEGORY_N0T_FOUND);
+            verify(dishPersistencePort, never()).saveDish(any());
         }
 
         @Test
@@ -212,7 +251,7 @@ class DishUseCaseTest {
             when(authenticationPort.getCurrentUserId()).thenReturn(999L);
 
             // when / then
-            assertThatThrownBy(() -> dishUseCase.updateDish(dish(DISH_ID, null), RESTAURANT_ID))
+            assertThatThrownBy(() -> dishUseCase.updateDish(dish(DISH_ID, null), RESTAURANT_ID, CATEGORY_ID))
                     .isInstanceOf(UnauthorizedException.class)
                     .hasMessage(DomainConstants.MSG_NOT_RESTAURANT_OWNER);
             verify(dishPersistencePort, never()).saveDish(any());
@@ -227,7 +266,7 @@ class DishUseCaseTest {
             when(authenticationPort.getCurrentUserId()).thenReturn(OWNER_ID);
 
             // when / then
-            assertThatThrownBy(() -> dishUseCase.updateDish(dish(DISH_ID, null), RESTAURANT_ID))
+            assertThatThrownBy(() -> dishUseCase.updateDish(dish(DISH_ID, null), RESTAURANT_ID, CATEGORY_ID))
                     .isInstanceOf(ConflictException.class)
                     .hasMessage(DomainConstants.MSG_DISH_RESTAURANT_MISMATCH);
             verify(dishPersistencePort, never()).saveDish(any());
@@ -241,7 +280,7 @@ class DishUseCaseTest {
             when(dishPersistencePort.getDishById(DISH_ID)).thenReturn(Optional.empty());
 
             // when / then
-            assertThatThrownBy(() -> dishUseCase.updateDish(dish(DISH_ID, null), RESTAURANT_ID))
+            assertThatThrownBy(() -> dishUseCase.updateDish(dish(DISH_ID, null), RESTAURANT_ID, CATEGORY_ID))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessage(DomainConstants.MSG_DISH_NOT_FOUND);
             verify(dishPersistencePort, never()).saveDish(any());

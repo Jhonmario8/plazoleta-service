@@ -22,7 +22,7 @@ public class DishHandler implements IDishHandler {
 
     @Override
     public void updateDish(DishDTO dto) {
-        dishServicePort.updateDish(mapper.toDomain(dto),dto.getRestaurantId());
+        dishServicePort.updateDish(mapper.toDomain(dto), dto.getRestaurantId(), dto.getCategoryId());
     }
     @Override
     public PaginatedResponseDto<DishResponseDto> getDishesByRestaurant(Long restaurantId, Long categoryId, int page, int size) {
