@@ -501,6 +501,7 @@ class OrderUseCaseTest {
             Order order = orderWithStatus(OrderStatus.PENDING);
             OrderTraceabilityRequest traceability = traceabilityWithState(OrderStatus.PENDING);
             when(orderPersistencePort.getOrderById(ORDER_ID)).thenReturn(Optional.of(order));
+            when(authenticationPort.getCurrentUserId()).thenReturn(CLIENT_ID);
             when(userServicePort.getUserById(CLIENT_ID)).thenReturn(Optional.of(client()));
             when(traceabilityServicePort.findTraceabilityById(ORDER_ID)).thenReturn(traceability);
 
@@ -521,6 +522,24 @@ class OrderUseCaseTest {
             verify(orderPersistencePort).saveOrder(order);
         }
 
+        @Test
+        @DisplayName("rechaza la cancelación si el usuario autenticado no es el cliente del pedido")
+        void rejectsWhenCallerIsNotOrderClient() {
+            // given
+            Order order = orderWithStatus(OrderStatus.PENDING);
+            when(orderPersistencePort.getOrderById(ORDER_ID)).thenReturn(Optional.of(order));
+            when(authenticationPort.getCurrentUserId()).thenReturn(999L);
+
+            // when / then
+            assertThatThrownBy(() -> orderUseCase.cancelOrder(ORDER_ID))
+                    .isInstanceOf(UnauthorizedException.class)
+                    .hasMessage(DomainConstants.MSG_NOT_ORDER_OWNER);
+            assertThat(order.getStatus()).isEqualTo(OrderStatus.PENDING);
+            verify(smsServicePort, never()).sendSms(any());
+            verify(traceabilityServicePort, never()).saveTraceabilityRecord(any());
+            verify(orderPersistencePort, never()).saveOrder(any());
+        }
+
         @ParameterizedTest(name = "estado {0}")
         @CsvSource({"IN_PREPARATION", "READY", "DELIVERED", "CANCELLED"})
         @DisplayName("rechaza cancelar si no está PENDING y avisa al cliente por SMS")
@@ -528,6 +547,7 @@ class OrderUseCaseTest {
             // given
             Order order = orderWithStatus(status);
             when(orderPersistencePort.getOrderById(ORDER_ID)).thenReturn(Optional.of(order));
+            when(authenticationPort.getCurrentUserId()).thenReturn(CLIENT_ID);
             when(userServicePort.getUserById(CLIENT_ID)).thenReturn(Optional.of(client()));
 
             // when / then

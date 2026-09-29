@@ -58,4 +58,5 @@ public class DomainConstants {
 
     public static final String MSG_RESTAURANT_NOT_FOUND = "Restaurant not found";
     public static final String MSG_NOT_RESTAURANT_OWNER = "You are not the owner of this restaurant";
+    public static final String MSG_NOT_ORDER_OWNER = "You can only cancel your own orders";
 }

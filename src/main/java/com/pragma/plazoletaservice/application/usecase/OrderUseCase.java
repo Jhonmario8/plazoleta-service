@@ -111,6 +111,10 @@ public class OrderUseCase implements IOrderServicePort {
         Order order = orderPersistencePort.getOrderById(orderId)
                 .orElseThrow(() -> new NotFoundException(DomainConstants.MSG_ORDER_NOT_FOUND));
 
+        if (!order.getClientId().equals(authenticationPort.getCurrentUserId())) {
+            throw new UnauthorizedException(DomainConstants.MSG_NOT_ORDER_OWNER);
+        }
+
         Employee client = userServicePort.getUserById(order.getClientId())
                 .orElseThrow(() -> new NotFoundException(DomainConstants.MSG_CLIENT_NOT_FOUND));
 
