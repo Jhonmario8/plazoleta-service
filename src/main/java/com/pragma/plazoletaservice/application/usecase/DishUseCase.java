@@ -58,7 +58,7 @@ public class DishUseCase implements IDishServicePort {
     }
 
     @Override
-    public void updateDish(Dish dish, Long restaurantId) {
+    public void updateDish(Dish dish, Long restaurantId, Long categoryId) {
 
         Restaurant restaurant = restaurantPersistencePort.getRestaurantById(restaurantId)
                 .orElseThrow(() -> new NotFoundException(DomainConstants.MSG_RESTAURANT_NOT_FOUND));
@@ -75,10 +75,15 @@ public class DishUseCase implements IDishServicePort {
             throw new ConflictException(DomainConstants.MSG_DISH_RESTAURANT_MISMATCH);
         }
 
+        if (categoryId != null) {
+            Category category = categoryPersistencePort.findCategoryById(categoryId)
+                    .orElseThrow(() -> new NotFoundException(DomainConstants.MSG_CATEGORY_N0T_FOUND));
+            existingDish.setCategory(category);
+        }
+
         existingDish.setName(dish.getName());
         existingDish.setDescription(dish.getDescription());
         existingDish.setPrice(dish.getPrice());
-        existingDish.setCategory(dish.getCategory());
         existingDish.setActive(dish.getActive());
 
         dishPersistencePort.saveDish(existingDish);

@@ -84,6 +84,8 @@ public class OrderUseCase implements IOrderServicePort {
         Order order = orderPersistencePort.getOrderById(orderId)
                 .orElseThrow(() -> new NotFoundException(DomainConstants.MSG_ORDER_NOT_FOUND));
 
+        validateEmployeeFromSameRestaurant(authenticationPort.getCurrentUserId(), order.getRestaurantId());
+
         Employee client = userServicePort.getUserById(order.getClientId())
                 .orElseThrow(() -> new NotFoundException(DomainConstants.MSG_CLIENT_NOT_FOUND));
 
@@ -108,6 +110,10 @@ public class OrderUseCase implements IOrderServicePort {
     public void cancelOrder(Long orderId) {
         Order order = orderPersistencePort.getOrderById(orderId)
                 .orElseThrow(() -> new NotFoundException(DomainConstants.MSG_ORDER_NOT_FOUND));
+
+        if (!order.getClientId().equals(authenticationPort.getCurrentUserId())) {
+            throw new UnauthorizedException(DomainConstants.MSG_NOT_ORDER_OWNER);
+        }
 
         Employee client = userServicePort.getUserById(order.getClientId())
                 .orElseThrow(() -> new NotFoundException(DomainConstants.MSG_CLIENT_NOT_FOUND));
@@ -134,6 +140,8 @@ public class OrderUseCase implements IOrderServicePort {
     public void deliverOrder(Long orderId, Integer orderCode) {
         Order order = orderPersistencePort.getOrderById(orderId)
                 .orElseThrow(() -> new NotFoundException(DomainConstants.MSG_ORDER_NOT_FOUND));
+
+        validateEmployeeFromSameRestaurant(authenticationPort.getCurrentUserId(), order.getRestaurantId());
 
         Employee client = userServicePort.getUserById(order.getClientId())
                 .orElseThrow(() -> new NotFoundException(DomainConstants.MSG_CLIENT_NOT_FOUND));
