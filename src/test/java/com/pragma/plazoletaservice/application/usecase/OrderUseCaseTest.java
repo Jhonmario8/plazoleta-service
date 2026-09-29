@@ -109,6 +109,11 @@ class OrderUseCaseTest {
         return request;
     }
 
+    private void givenAuthenticatedEmployeeOfOrderRestaurant() {
+        when(authenticationPort.getCurrentUserId()).thenReturn(EMPLOYEE_ID);
+        when(userServicePort.getUserById(EMPLOYEE_ID)).thenReturn(Optional.of(employee(Role.EMPLOYEE, RESTAURANT_ID)));
+    }
+
     @Nested
     @DisplayName("createOrder")
     class CreateOrder {
@@ -354,6 +359,7 @@ class OrderUseCaseTest {
             Order order = orderWithStatus(OrderStatus.PENDING);
             OrderTraceabilityRequest traceability = traceabilityWithState(OrderStatus.PENDING);
             when(orderPersistencePort.getOrderById(ORDER_ID)).thenReturn(Optional.of(order));
+            givenAuthenticatedEmployeeOfOrderRestaurant();
             when(userServicePort.getUserById(CLIENT_ID)).thenReturn(Optional.of(client()));
             when(traceabilityServicePort.findTraceabilityById(ORDER_ID)).thenReturn(traceability);
 
@@ -375,6 +381,7 @@ class OrderUseCaseTest {
             // given
             Order order = orderWithStatus(OrderStatus.IN_PREPARATION);
             when(orderPersistencePort.getOrderById(ORDER_ID)).thenReturn(Optional.of(order));
+            givenAuthenticatedEmployeeOfOrderRestaurant();
             when(userServicePort.getUserById(CLIENT_ID)).thenReturn(Optional.of(client()));
             when(traceabilityServicePort.findTraceabilityById(ORDER_ID))
                     .thenReturn(traceabilityWithState(OrderStatus.IN_PREPARATION));
@@ -409,6 +416,7 @@ class OrderUseCaseTest {
         void rejectsInvalidTransitions(OrderStatus current, OrderStatus requested) {
             // given
             when(orderPersistencePort.getOrderById(ORDER_ID)).thenReturn(Optional.of(orderWithStatus(current)));
+            givenAuthenticatedEmployeeOfOrderRestaurant();
             when(userServicePort.getUserById(CLIENT_ID)).thenReturn(Optional.of(client()));
 
             // when / then
@@ -420,10 +428,30 @@ class OrderUseCaseTest {
         }
 
         @Test
+        @DisplayName("rechaza el cambio de estado si el empleado autenticado es de otro restaurante")
+        void rejectsEmployeeFromAnotherRestaurant() {
+            // given
+            Order order = orderWithStatus(OrderStatus.IN_PREPARATION);
+            when(orderPersistencePort.getOrderById(ORDER_ID)).thenReturn(Optional.of(order));
+            when(authenticationPort.getCurrentUserId()).thenReturn(EMPLOYEE_ID);
+            when(userServicePort.getUserById(EMPLOYEE_ID)).thenReturn(Optional.of(employee(Role.EMPLOYEE, 999L)));
+
+            // when / then
+            assertThatThrownBy(() -> orderUseCase.updateOrderStatus(ORDER_ID, OrderStatus.READY))
+                    .isInstanceOf(DomainException.class)
+                    .hasMessage(DomainConstants.MSG_EMPLOYEE_NOT_FROM_SAME_RESTAURANT);
+            assertThat(order.getStatus()).isEqualTo(OrderStatus.IN_PREPARATION);
+            verify(traceabilityServicePort, never()).saveTraceabilityRecord(any());
+            verify(smsServicePort, never()).sendSms(any());
+            verify(orderPersistencePort, never()).saveOrder(any());
+        }
+
+        @Test
         @DisplayName("no permite marcar DELIVERED por este método (debe usarse deliverOrder)")
         void rejectsDeliveredThroughThisMethod() {
             // given
             when(orderPersistencePort.getOrderById(ORDER_ID)).thenReturn(Optional.of(orderWithStatus(OrderStatus.READY)));
+            givenAuthenticatedEmployeeOfOrderRestaurant();
             when(userServicePort.getUserById(CLIENT_ID)).thenReturn(Optional.of(client()));
 
             // when / then
@@ -450,6 +478,7 @@ class OrderUseCaseTest {
         void throwsWhenClientNotFound() {
             // given
             when(orderPersistencePort.getOrderById(ORDER_ID)).thenReturn(Optional.of(orderWithStatus(OrderStatus.IN_PREPARATION)));
+            givenAuthenticatedEmployeeOfOrderRestaurant();
             when(userServicePort.getUserById(CLIENT_ID)).thenReturn(Optional.empty());
 
             // when / then
@@ -541,6 +570,7 @@ class OrderUseCaseTest {
             order.setOrderCode(ORDER_CODE);
             OrderTraceabilityRequest traceability = traceabilityWithState(OrderStatus.READY);
             when(orderPersistencePort.getOrderById(ORDER_ID)).thenReturn(Optional.of(order));
+            givenAuthenticatedEmployeeOfOrderRestaurant();
             when(userServicePort.getUserById(CLIENT_ID)).thenReturn(Optional.of(client()));
             when(traceabilityServicePort.findTraceabilityById(ORDER_ID)).thenReturn(traceability);
 
@@ -562,12 +592,33 @@ class OrderUseCaseTest {
         }
 
         @Test
+        @DisplayName("rechaza la entrega si el empleado autenticado es de otro restaurante")
+        void rejectsEmployeeFromAnotherRestaurant() {
+            // given
+            Order order = orderWithStatus(OrderStatus.READY);
+            order.setOrderCode(ORDER_CODE);
+            when(orderPersistencePort.getOrderById(ORDER_ID)).thenReturn(Optional.of(order));
+            when(authenticationPort.getCurrentUserId()).thenReturn(EMPLOYEE_ID);
+            when(userServicePort.getUserById(EMPLOYEE_ID)).thenReturn(Optional.of(employee(Role.EMPLOYEE, 999L)));
+
+            // when / then
+            assertThatThrownBy(() -> orderUseCase.deliverOrder(ORDER_ID, ORDER_CODE))
+                    .isInstanceOf(DomainException.class)
+                    .hasMessage(DomainConstants.MSG_EMPLOYEE_NOT_FROM_SAME_RESTAURANT);
+            assertThat(order.getStatus()).isEqualTo(OrderStatus.READY);
+            verify(traceabilityServicePort, never()).saveTraceabilityRecord(any());
+            verify(smsServicePort, never()).sendSms(any());
+            verify(orderPersistencePort, never()).saveOrder(any());
+        }
+
+        @Test
         @DisplayName("rechaza la entrega si el código no coincide")
         void rejectsInvalidCode() {
             // given
             Order order = orderWithStatus(OrderStatus.READY);
             order.setOrderCode(ORDER_CODE);
             when(orderPersistencePort.getOrderById(ORDER_ID)).thenReturn(Optional.of(order));
+            givenAuthenticatedEmployeeOfOrderRestaurant();
             when(userServicePort.getUserById(CLIENT_ID)).thenReturn(Optional.of(client()));
 
             // when / then
@@ -588,6 +639,7 @@ class OrderUseCaseTest {
             Order order = orderWithStatus(status);
             order.setOrderCode(ORDER_CODE);
             when(orderPersistencePort.getOrderById(ORDER_ID)).thenReturn(Optional.of(order));
+            givenAuthenticatedEmployeeOfOrderRestaurant();
             when(userServicePort.getUserById(CLIENT_ID)).thenReturn(Optional.of(client()));
 
             // when / then
